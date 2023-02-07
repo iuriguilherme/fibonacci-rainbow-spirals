@@ -45,6 +45,7 @@ const variants = {
 }
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
 const featureVariant = fxHashToVariant(fxhashDecimal, 8);
+//~ const featureVariant = 0;
 const featureHue = fxHashToVariant(fxhashDecimal, 360);
 const featureSaturation = fxHashToVariant(fxhashDecimal, 25) + 75;
 const featureLuminance = fxHashToVariant(fxhashDecimal, 30) + 30;
@@ -112,7 +113,7 @@ async function drawFeature(
     var hue = spiral * (360 / maxSpirals);
     var saturation = math.abs(100 - iteration * (100 / maxIterations));
     stroke(hue, saturation, luminance);
-    animation = false;
+    //~ animation = false;
     //~ variant = 0;
     switch (variant) {
         case 0:
@@ -312,6 +313,7 @@ function getRarity(maxTries = 1e3, maxVariants, fun = fxHashToVariant) {
 window.$fxhashFeatures = {
     "Variant": featureVariant,
     "fx(hue)": featureHue,
+    "fx(saturation)": featureSaturation,
     "fx(luminance)": featureLuminance
 }
 
