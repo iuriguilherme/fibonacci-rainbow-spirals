@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals v2
- * @version 2.0.0  
+ * @version 2.1.0  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -26,41 +26,58 @@
 // https://github.com/fxhash/fxhash-webpack-boilerplate/issues/20
 const properAlphabet = 
     "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-const variants = {
-    0: 1e-87,
-    1: 2e-87,
-    2: 6e-87,
-    3: 1e-86,
-    4: 1.5e-86,
-    5: 2e-86,
-    6: 2.2e-86,
-    7: 2.6e-86,
-    8: 3e-86,
-    25: 9.6e-86,
-    30: 1.16e-85,
-    60: 2.33e-85,
-    100: 3.9e-85,
-    255: 9.95e-85,
-    360: 1.406e-84
-}
+const variantFactor = 3.904e-87; // This number is magic
+const pi = math.pi;
+const half_pi = math.pi / 2;
+const phi = math.phi;
+const sqrt5 = math.sqrt(5);
+const maxIterations = 100;
+const maxSpirals = 360;
+const delay = 1;
+const animate = false;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
-const featureVariant = fxHashToVariant(fxhashDecimal, 8);
-//~ const featureVariant = 0;
+//~ const featureVariant = fxHashToVariant(fxhashDecimal, 13);
+const featureVariant = -1;
 const featureHue = fxHashToVariant(fxhashDecimal, 360);
 const featureSaturation = fxHashToVariant(fxhashDecimal, 25) + 75;
 const featureLuminance = fxHashToVariant(fxhashDecimal, 30) + 30;
-const sqrt5 = math.sqrt(5);
-const spin = math.pi / 2;
-const maxIterations = 100;
-const maxSpirals = 360;
-const lastFibonacci = getFibonacci(maxIterations);
+//~ const lastIterationFibonacci = getFibonacci(maxIterations);
+const lastIterationFibonacci = fibonacci_index[maxIterations];
+//~ const lastSpiralFibonacci = getFibonacci(maxSpirals);
+const lastSpiralFibonacci = fibonacci_index[maxSpirals];
+let drawFunction = drawFunction1;
+let drawParams = {
+    "x": "a",
+    "y": "a",
+    "w": "b",
+    "h": "b",
+    "start": "a",
+    "stop": "b",
+    "rotate": "e",
+    "weight": "w"
+};
+let scope = {
+    "a": 0,
+    "b": 0,
+    "c": 0,
+    "d": 0,
+    "e": half_pi,
+    "f": phi,
+    "g": pi,
+    "h": featureHue,
+    "s": featureSaturation,
+    "l": featureLuminance,
+    "w": 1
+};
 let size;
 
 setup = function() {
     randomSeed(fxrand() * 1e8);
+    colorMode(HSL);
     size = min(window.innerWidth, window.innerHeight);
     createCanvas(size, size);
-    colorMode(HSL);
+    configureVariant(featureVariant);
     frameRate(60);
     noLoop();
 }
@@ -70,28 +87,26 @@ draw = async function() {
         'variant': featureVariant,
         'hue': featureHue,
         'saturation': featureSaturation,
-        'luminance': featureLuminance
+        'luminance': featureLuminance,
+        'drawFunction': drawFunction.name,
+        'drawParams': drawParams
     });
-    background(featureHue, featureSaturation, featureLuminance);
     noFill();
-    strokeWeight(1);
+    background(featureHue, featureSaturation, featureLuminance);
     size = min(window.innerWidth, window.innerHeight);
     translate(size / 2, size / 2);
-    for (var iteration = 0; iteration < maxIterations; iteration++) {
-        translate(iteration, iteration);
-        var fibonacci = getFibonacci(iteration);
-        for (var spiral = 0; spiral <= maxSpirals; spiral++) {
-            await drawFeature(
-                iteration,
-                spiral,
-                fibonacci,
-                featureLuminance,
-                spin,
-                featureVariant,
-                true
-            );
+    for (var i = 0; i < maxIterations; i++) {
+        translate(i, i);
+        var iFib = fibonacci_index[i.toString()];
+        for (var j = 0; j <= maxSpirals; j++) {
+            var jFib = fibonacci_index[j.toString()];
+            scope.a = i;
+            scope.b = j;
+            scope.c = iFib;
+            scope.d = jFib;
+            await drawFunction(scope.h, scope.s, scope.l);
         }
-        rotate(spin);
+        rotate(math.evaluate(drawParams.rotate, scope));
     }
     fxpreview();
 }
@@ -101,118 +116,39 @@ windowResized = function() {
     resizeCanvas(size, size);
 }
 
-async function drawFeature(
-    iteration = 0,
-    spiral = 0,
-    fibonacci = 0,
-    luminance = 100,
-    spin = 1,
-    variant = 0,
-    animation = true
-) {
-    var hue = spiral * (360 / maxSpirals);
-    var saturation = math.abs(100 - iteration * (100 / maxIterations));
-    stroke(hue, saturation, luminance);
-    //~ animation = false;
-    //~ variant = 0;
-    switch (variant) {
-        case 0:
-            // https://www.fxhash.xyz/generative/24631
-            arc(
-                spiral,
-                iteration * spiral,
-                fibonacci * iteration,
-                fibonacci * spiral,
-                fibonacci,
-                spin
-            );
-            break;
-        case 1:
-            arc(
-                spiral,
-                iteration * spiral,
-                fibonacci * iteration,
-                fibonacci * spiral,
-                spiral,
-                spin
-            );
-            break;
-        case 2:
-            arc(
-                fibonacci + iteration,
-                fibonacci * iteration,
-                fibonacci + spiral,
-                fibonacci * spiral,
-                fibonacci,
-                spin
-            );
-            break;
-        case 3:
-            arc(
-                spiral,
-                fibonacci ** iteration,
-                spiral,
-                fibonacci * spiral,
-                spiral,
-                spin
-            );
-            break;
-        case 4:
-            arc(
-                fibonacci + (iteration * spiral),
-                fibonacci + (iteration ** spiral),
-                fibonacci * iteration,
-                fibonacci * spiral,
-                spiral,
-                spin
-            );
-            break;
-        case 5:
-            arc(
-                spiral,
-                fibonacci * iteration,
-                iteration,
-                fibonacci * spiral,
-                spiral,
-                spin
-            );
-            break;
-        case 6:
-            arc(
-                spiral * iteration,
-                fibonacci * spiral,
-                spiral ** iteration,
-                fibonacci ** spiral,
-                fibonacci * spiral,
-                spin
-            );
-            break;
-        case 7:
-            translate(spiral, spiral);
-            arc(
-                spiral,
-                iteration * spiral,
-                fibonacci * iteration,
-                fibonacci * spiral,
-                spiral,
-                spin
-            );
-            break;
-        case 8:
-            arc(
-                iteration + spiral,
-                fibonacci + spiral,
-                iteration * spiral,
-                fibonacci * spiral,
-                fibonacci,
-                spin
-            );
-            break;
-        default:
-            arc(0, 0, fibonacci, fibonacci, 0, spin);
+async function drawFunction1() {
+    scope.h = scope.b;
+    scope.s = math.abs(100 - scope.a);
+    await drawCanvas();
+}
+
+async function drawFunction2() {
+    scope.h = scope.b;
+    scope.s = scope.a;
+    await drawCanvas();
+}
+
+async function drawFunction3() {
+    translate(scope.b, scope.b);
+    await drawFunction1();
+}
+
+async function drawFunction4() {
+    scope.h = math.abs(360 - scope.b);
+    scope.s = math.abs(100 - scope.a);
+    await drawCanvas();
+}
+
+async function drawCanvas() {
+    strokeWeight(scope.w);
+    stroke(scope.h, scope.s, scope.l);
+    let p = {};
+    for (var k in drawParams) {
+        p[k] = math.evaluate(drawParams[k], scope);
     }
-    if (animation) {
-        await new Promise(r => setTimeout(r, 1));
+    arc(p.x, p.y, p.w, p.h, p.start, p.stop);
+    if (animate) {
+        await sleep(delay);
     }
 }
 
@@ -234,7 +170,7 @@ function base58toDecimal(hash = fxhashTrunc) {
     var iterArray = Array.from(hash).reverse();
     while (iterArray.length > 0) {
         decimal += properAlphabet.indexOf(iterArray.slice(-1)) * 
-            (Math.pow(58, iterArray.length - 1));
+            (math.pow(58, iterArray.length - 1));
         iterArray = iterArray.slice(0, -1);
     }
     return decimal;
@@ -246,75 +182,235 @@ function base58toDecimal(hash = fxhashTrunc) {
  *      of (0, n) for the return value
  * @param {boolean} inverse: transforms range into (n, 0)
  * @returns {int} one random integer defined by fxhash and a threshold
- *      defined by variants[maxVariants]
+ *      defined by maxVariants * variantFactor
  */
 function fxHashToVariant(decimalHash, maxVariants, inverse = false) {
-    var variant = math.round(decimalHash * 
-        variants[maxVariants.toString()]);
+    let variant = math.round(decimalHash * maxVariants * variantFactor);
     if (inverse) {
         return math.abs(maxVariants - variant);
     }
-    return math.abs(variant);
-}
-/**
- * @param {float} decimalHash: output from base58toDecimal(fxhash)
- * @param {int} maxVariants: the inclusive n from the desired range 
- *      of (0, n) for the return value
- * @returns {int} one random integer defined by fxhash and a threshold
- *      defined by variants[maxVariants]
- * @description Doesn't always work
- */
-function fxHashToVariantSimple(decimalHash, maxVariants) {
-    return decimalHash % maxVariants;
+    return variant;
 }
 
-/**
- * @param {float} maxTries: maximum random strings to generate
- * @param {int} maxVariants: passed to fun()
- * @param {function} fun: function to test against
- * @returns {Array} result of rarity probabilty given maxTries amount
- *      of mints for fun()
- */
-function getRarity(maxTries = 1e3, maxVariants, fun = fxHashToVariant) {
-    let maxFeature = 0;
-    let minFeature = 1e306;
-    let currentFeature = 0;
-    for (let i = 0; i < maxTries; i++) {
-        var fakehash = Array(49).fill(0).map(_ => alphabet[(
-            Math.random() * alphabet.length) | 0]).join('')
-        currentFeature = fun(base58toDecimal(fakehash), maxVariants);
-        if (currentFeature > maxFeature) {
-            maxFeature = currentFeature;
-        }
-        if (currentFeature < minFeature) {
-            minFeature = currentFeature;
-        }
+function configureVariant(variant) {
+    switch (variant) {
+        case -1:
+            drawFunction = drawFunction2;
+            drawParams = {
+                "x": "b",
+                "y": "a * b",
+                "w": "b",
+                "h": "d",
+                "start": "b",
+                "stop": "b * f",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 0:
+            // https://www.fxhash.xyz/generative/24631
+            drawFunction = drawFunction1;
+            drawParams = {
+                "x": "b",
+                "y": "a * b",
+                "w": "a * c",
+                "h": "b * c",
+                "start": "c",
+                "stop": "e",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 1:
+            // https://www.fxhash.xyz/generative/24810
+            drawFunction = drawFunction1;
+            drawParams = {
+                "x": "b",
+                "y": "a * b",
+                "w": "a * c",
+                "h": "b * c",
+                "start": "b",
+                "stop": "e",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 2:
+            // https://www.fxhash.xyz/generative/24849
+            drawFunction = drawFunction1;
+            drawParams = {
+                "x": "b",
+                "y": "pow(c, a)",
+                "w": "b",
+                "h": "b * c",
+                "start": "b",
+                "stop": "e",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 3:
+            drawFunction = drawFunction1;
+            drawParams = {
+                "x": "a + c",
+                "y": "a * c",
+                "w": "b + c",
+                "h": "b * c",
+                "start": "c",
+                "stop": "e",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 4:
+            drawFunction = drawFunction1;
+            drawParams = {
+                "x": "c + (a * b)",
+                "y": "c + pow(a, b)",
+                "w": "a * c",
+                "h": "b * c",
+                "start": "b",
+                "stop": "e",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 5:
+            drawFunction = drawFunction2;
+            drawParams = {
+                "x": "b",
+                "y": "c * a",
+                "w": "a",
+                "h": "b * c",
+                "start": "b",
+                "stop": "e",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 6:
+            drawFunction = drawFunction1;
+            drawParams = {
+                "x": "a * b",
+                "y": "b * c",
+                "w": "pow(b, a)",
+                "h": "pow(c, b)",
+                "start": "b * c",
+                "stop": "e",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 7:
+            drawFunction = drawFunction3;
+            drawParams = {
+                "x": "b",
+                "y": "a * b",
+                "w": "a * c",
+                "h": "b * c",
+                "start": "b",
+                "stop": "e",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 8:
+            drawFunction = drawFunction4;
+            drawParams = {
+                "x": "a + b",
+                "y": "b + c",
+                "w": "a * b",
+                "h": "b * c",
+                "start": "c",
+                "stop": "e",
+                "rotate": "f",
+                "weight": "w"
+            };
+            break;
+        case 9:
+            drawFunction = drawFunction1;
+            drawParams = {
+                "x": "b",
+                "y": "a * b",
+                "w": "d",
+                "h": "d",
+                "start": "c",
+                "stop": "b * f",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 10:
+            drawFunction = drawFunction2;
+            drawParams = {
+                "x": "a",
+                "y": "b",
+                "w": "a",
+                "h": "a",
+                "start": "c",
+                "stop": "g / a",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 11:
+            drawFunction = drawFunction1;
+            drawParams = {
+                "x": "a",
+                "y": "b",
+                "w": "c",
+                "h": "c",
+                "start": "b",
+                "stop": "g / b",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 12:
+            drawFunction = drawFunction2;
+            drawParams = {
+                "x": "a * 2",
+                "y": "a * 3",
+                "w": "a * 3",
+                "h": "b",
+                "start": "c",
+                "stop": "b * f",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        case 13:
+            // This one is my personal favorite
+            drawFunction = drawFunction2;
+            drawParams = {
+                "x": "a",
+                "y": "a",
+                "w": "b",
+                "h": "c",
+                "start": "c",
+                "stop": "b * f",
+                "rotate": "e",
+                "weight": "w"
+            };
+            break;
+        default:
+            drawFunction = drawFunction1;
+            drawParams = {
+                "x": "0",
+                "y": "0",
+                "w": "c",
+                "h": "c",
+                "start": "0",
+                "stop": "e",
+                "rotate": "e",
+                "weight": "w"
+            };
     }
-    let med = {};
-    for (let j = 0; j <= maxVariants; j++) {
-        var pos = math.round((properAlphabet.length - 1) 
-            * j / maxVariants).toString();
-        var key = fun(
-            base58toDecimal(properAlphabet[pos].toString().repeat(49)),
-            maxVariants
-        )
-        med[key] = properAlphabet[pos];
-    }
-    return {
-        "sample": maxTries,
-        "sampleMin": minFeature,
-        "sampleMax": maxFeature,
-        "min": fun(base58toDecimal('1'.repeat(49)), maxVariants),
-        "max": fun(base58toDecimal('z'.repeat(49)), maxVariants),
-        "med": med
-    };
 }
 
 window.$fxhashFeatures = {
-    "Variant": featureVariant,
+    //~ "Variant": featureVariant,
     "fx(hue)": featureHue,
     "fx(saturation)": featureSaturation,
     "fx(luminance)": featureLuminance
 }
-
-//~ console.log(getRarity(1e1, 30, fxHashToVariant));
