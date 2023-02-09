@@ -1,11 +1,11 @@
 /**!
  * @file Fibonacci Rainbow Spirals v2
- * @version 2.1.0  
+ * @version 2.1.1  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
  * @description This is Fibonacci Rainbow Spirals made with p5js for 
- *      fxhash.xyz GT. Source code available at Github: 
+ *      fxhash.xyz genarative tokens. Source code available at Github: 
  *      https://github.com/iuriguilherme/fxhash1  
  * 
  * This program is free software: you can redistribute it and/or modify it 
@@ -34,12 +34,13 @@ const sqrt5 = math.sqrt(5);
 const maxIterations = 100;
 const maxSpirals = 360;
 const delay = 1;
-const animate = false;
+const animate = true;
+//~ const animate = false;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
-//~ const featureVariant = fxHashToVariant(fxhashDecimal, 13);
-const featureVariant = -1;
-const featureHue = fxHashToVariant(fxhashDecimal, 360);
+const featureVariant = fxHashToVariant(fxhashDecimal, 14);
+//~ const featureVariant = -1;
+const featureHue = fxHashToVariant(fxhashDecimal, 240) + 60;
 const featureSaturation = fxHashToVariant(fxhashDecimal, 25) + 75;
 const featureLuminance = fxHashToVariant(fxhashDecimal, 30) + 30;
 //~ const lastIterationFibonacci = getFibonacci(maxIterations);
@@ -48,14 +49,21 @@ const lastIterationFibonacci = fibonacci_index[maxIterations];
 const lastSpiralFibonacci = fibonacci_index[maxSpirals];
 let drawFunction = drawFunction1;
 let drawParams = {
-    "x": "a",
-    "y": "a",
-    "w": "b",
-    "h": "b",
-    "start": "a",
-    "stop": "b",
+    "x": "0",
+    "y": "0",
+    "w": "c",
+    "h": "c",
+    "start": "0",
+    "stop": "e",
     "rotate": "e",
-    "weight": "w"
+    "weight": "w",
+    "tsx": "z / 2",
+    "tsy": "z / 2",
+    "tix": "a",
+    "tiy": "a",
+    "bh": "h",
+    "bs": "s",
+    "bl": "l"
 };
 let scope = {
     "a": 0,
@@ -68,14 +76,16 @@ let scope = {
     "h": featureHue,
     "s": featureSaturation,
     "l": featureLuminance,
-    "w": 1
+    "w": 1,
+    "x": window.innerWidth,
+    "y": window.innerHeight,
+    "z": math.min(window.innerWidth, window.innerHeight)
 };
-let size;
 
 setup = function() {
     randomSeed(fxrand() * 1e8);
     colorMode(HSL);
-    size = min(window.innerWidth, window.innerHeight);
+    let size = min(window.innerWidth, window.innerHeight);
     createCanvas(size, size);
     configureVariant(featureVariant);
     frameRate(60);
@@ -92,11 +102,21 @@ draw = async function() {
         'drawParams': drawParams
     });
     noFill();
-    background(featureHue, featureSaturation, featureLuminance);
-    size = min(window.innerWidth, window.innerHeight);
-    translate(size / 2, size / 2);
+    scope.z = min(window.innerWidth, window.innerHeight);
+    translate(
+        math.evaluate(drawParams.tsx, scope),
+        math.evaluate(drawParams.tsy, scope)
+    );
+    background(
+        math.evaluate(drawParams.bh, scope),
+        math.evaluate(drawParams.bs, scope),
+        math.evaluate(drawParams.bl, scope)
+    );
     for (var i = 0; i < maxIterations; i++) {
-        translate(i, i);
+        translate(
+            math.evaluate(drawParams.tix, scope),
+            math.evaluate(drawParams.tiy, scope)
+        );
         var iFib = fibonacci_index[i.toString()];
         for (var j = 0; j <= maxSpirals; j++) {
             var jFib = fibonacci_index[j.toString()];
@@ -112,7 +132,7 @@ draw = async function() {
 }
 
 windowResized = function() {
-    size = min(window.innerWidth, window.innerHeight);
+    let size = min(window.innerWidth, window.innerHeight);
     resizeCanvas(size, size);
 }
 
@@ -192,219 +212,190 @@ function fxHashToVariant(decimalHash, maxVariants, inverse = false) {
     return variant;
 }
 
-function configureVariant(variant) {
+/**
+ * @param {int} variant: output from 
+ *      fxHashToVariant(base58toDecimal(fxhashTrunc))
+ */
+function configureVariant(variant = featureVariant) {
+    let params = {};
     switch (variant) {
         case -1:
             drawFunction = drawFunction2;
-            drawParams = {
+            params = {
                 "x": "b",
                 "y": "a * b",
                 "w": "b",
                 "h": "d",
                 "start": "b",
-                "stop": "b * f",
-                "rotate": "e",
-                "weight": "w"
+                "stop": "b * f"
             };
             break;
         case 0:
             // https://www.fxhash.xyz/generative/24631
             drawFunction = drawFunction1;
-            drawParams = {
+            params = {
                 "x": "b",
                 "y": "a * b",
                 "w": "a * c",
                 "h": "b * c",
-                "start": "c",
-                "stop": "e",
-                "rotate": "e",
-                "weight": "w"
+                "start": "c"
             };
             break;
         case 1:
             // https://www.fxhash.xyz/generative/24810
             drawFunction = drawFunction1;
-            drawParams = {
+            params = {
                 "x": "b",
                 "y": "a * b",
                 "w": "a * c",
                 "h": "b * c",
-                "start": "b",
-                "stop": "e",
-                "rotate": "e",
-                "weight": "w"
+                "start": "b"
             };
             break;
         case 2:
             // https://www.fxhash.xyz/generative/24849
             drawFunction = drawFunction1;
-            drawParams = {
+            params = {
                 "x": "b",
                 "y": "pow(c, a)",
                 "w": "b",
                 "h": "b * c",
-                "start": "b",
-                "stop": "e",
-                "rotate": "e",
-                "weight": "w"
+                "start": "b"
             };
             break;
         case 3:
             drawFunction = drawFunction1;
-            drawParams = {
+            params = {
                 "x": "a + c",
                 "y": "a * c",
                 "w": "b + c",
                 "h": "b * c",
-                "start": "c",
-                "stop": "e",
-                "rotate": "e",
-                "weight": "w"
+                "start": "c"
             };
             break;
         case 4:
             drawFunction = drawFunction1;
-            drawParams = {
+            params = {
                 "x": "c + (a * b)",
                 "y": "c + pow(a, b)",
                 "w": "a * c",
                 "h": "b * c",
-                "start": "b",
-                "stop": "e",
-                "rotate": "e",
-                "weight": "w"
+                "start": "b"
             };
             break;
         case 5:
             drawFunction = drawFunction2;
-            drawParams = {
+            params = {
                 "x": "b",
                 "y": "c * a",
                 "w": "a",
                 "h": "b * c",
-                "start": "b",
-                "stop": "e",
-                "rotate": "e",
-                "weight": "w"
+                "start": "b"
             };
             break;
         case 6:
             drawFunction = drawFunction1;
-            drawParams = {
+            params = {
                 "x": "a * b",
                 "y": "b * c",
                 "w": "pow(b, a)",
                 "h": "pow(c, b)",
-                "start": "b * c",
-                "stop": "e",
-                "rotate": "e",
-                "weight": "w"
+                "start": "b * c"
             };
             break;
         case 7:
             drawFunction = drawFunction3;
-            drawParams = {
+            params = {
                 "x": "b",
                 "y": "a * b",
                 "w": "a * c",
                 "h": "b * c",
-                "start": "b",
-                "stop": "e",
-                "rotate": "e",
-                "weight": "w"
+                "start": "b"
             };
             break;
         case 8:
             drawFunction = drawFunction4;
-            drawParams = {
+            params = {
                 "x": "a + b",
                 "y": "b + c",
                 "w": "a * b",
                 "h": "b * c",
                 "start": "c",
-                "stop": "e",
-                "rotate": "f",
-                "weight": "w"
+                "rotate": "f"
             };
             break;
         case 9:
             drawFunction = drawFunction1;
-            drawParams = {
+            params = {
                 "x": "b",
                 "y": "a * b",
                 "w": "d",
                 "h": "d",
                 "start": "c",
-                "stop": "b * f",
-                "rotate": "e",
-                "weight": "w"
+                "stop": "b * f"
             };
             break;
         case 10:
             drawFunction = drawFunction2;
-            drawParams = {
+            params = {
                 "x": "a",
                 "y": "b",
                 "w": "a",
                 "h": "a",
                 "start": "c",
-                "stop": "g / a",
-                "rotate": "e",
-                "weight": "w"
+                "stop": "g / a"
             };
             break;
         case 11:
             drawFunction = drawFunction1;
-            drawParams = {
+            params = {
                 "x": "a",
                 "y": "b",
                 "w": "c",
                 "h": "c",
                 "start": "b",
-                "stop": "g / b",
-                "rotate": "e",
-                "weight": "w"
+                "stop": "g / b"
             };
             break;
         case 12:
             drawFunction = drawFunction2;
-            drawParams = {
+            params = {
                 "x": "a * 2",
                 "y": "a * 3",
                 "w": "a * 3",
                 "h": "b",
                 "start": "c",
-                "stop": "b * f",
-                "rotate": "e",
-                "weight": "w"
+                "stop": "b * f"
             };
             break;
         case 13:
             // This one is my personal favorite
             drawFunction = drawFunction2;
-            drawParams = {
+            params = {
                 "x": "a",
                 "y": "a",
                 "w": "b",
                 "h": "c",
                 "start": "c",
-                "stop": "b * f",
-                "rotate": "e",
-                "weight": "w"
+                "stop": "b * f"
+            };
+            break;
+        case 14:
+            drawFunction = drawFunction2;
+            params = {
+                "x": "b",
+                "y": "a * b",
+                "w": "b",
+                "h": "d",
+                "start": "b",
+                "stop": "b * f"
             };
             break;
         default:
-            drawFunction = drawFunction1;
-            drawParams = {
-                "x": "0",
-                "y": "0",
-                "w": "c",
-                "h": "c",
-                "start": "0",
-                "stop": "e",
-                "rotate": "e",
-                "weight": "w"
-            };
+            console.log("Variant " + variant + " out of bonds");
+    }
+    for (let k in params) {
+        drawParams[k] = params[k];
     }
 }
 
