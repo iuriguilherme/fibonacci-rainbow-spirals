@@ -39,7 +39,7 @@ const animate = true;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
 //~ const featureVariant = fxHashToVariant(fxhashDecimal, 14);
-const featureVariant = 3;
+const featureVariant = 4;
 const featureHue = fxHashToVariant(fxhashDecimal, 240) + 60;
 const featureSaturation = fxHashToVariant(fxhashDecimal, 25) + 75;
 const featureLuminance = fxHashToVariant(fxhashDecimal, 30) + 30;
