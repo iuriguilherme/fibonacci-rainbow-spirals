@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals v2
- * @version 2.1.1  
+ * @version 2.1.2  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -81,12 +81,19 @@ let scope = {
     "y": window.innerHeight,
     "z": math.min(window.innerWidth, window.innerHeight)
 };
+let reSize, reScale, reRatio, reReWidth, reReHeight;
+let reWidth = window.innerWidth;
+let reHeight = window.innerHeight;
 
 setup = function() {
     randomSeed(fxrand() * 1e8);
     colorMode(HSL);
-    let size = min(window.innerWidth, window.innerHeight);
-    createCanvas(size, size);
+    reRatio = reWidth / reHeight;
+    checkRatio();
+    reSize = min(reReWidth, reReHeight);
+    createCanvas(reSize, reSize);
+    reScale = width / reWidth;
+    scale(reScale);
     configureVariant(featureVariant);
     frameRate(60);
     noLoop();
@@ -102,7 +109,9 @@ draw = async function() {
         'drawParams': drawParams
     });
     noFill();
-    scope.z = min(window.innerWidth, window.innerHeight);
+    scale(reScale);
+    reSize = min(reReWidth, reReHeight);
+    scope.z = reSize;
     translate(
         math.evaluate(drawParams.tsx, scope),
         math.evaluate(drawParams.tsy, scope)
@@ -132,8 +141,22 @@ draw = async function() {
 }
 
 windowResized = function() {
-    let size = min(window.innerWidth, window.innerHeight);
-    resizeCanvas(size, size);
+    checkRatio();
+    reSize = min(reReWidth, reReHeight);
+    resizeCanvas(reSize, reSize);
+}
+
+function checkRatio(){
+    let reReRatio = window.innerWidth / window.innerHeight;
+    if (reReRatio > reRatio) {
+        reScale = window.innerHeight / reHeight;
+    reReWidth = (window.innerHeight / reHeight) * reWidth;
+    reReHeight = window.innerHeigth;
+  } else {
+    reScale = window.innerWidth / reWidth;
+    reReWidth = window.innerWidth;
+    reReHeight = (window.innerWidth / reWidth) * reHeight;
+  }
 }
 
 async function drawFunction1() {
