@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals v2
- * @version 2.2.0  
+ * @version 2.2.2  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -34,7 +34,7 @@ const phi = math.phi;
 const sqrt5 = math.sqrt(5);
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
 //~ const featureVariant = fxHashToVariant(fxhashDecimal, 18);
-const featureVariant = 5;
+const featureVariant = 6;
 //~ const featureVariant = -1;
 let drawFunction = drawFunction1;
 let p = {
@@ -97,12 +97,19 @@ let scope = {
     "y": window.innerHeight,
     "z": math.min(window.innerWidth, window.innerHeight)
 };
-let reSize, reScale, reRatio, reReWidth, reReHeight, featureHue, 
-    featureSaturation, featureLuminance, lastIterationFibonacci,
-    lastIterationSpiral;
+let reSize, reScale, reRatio, reReWidth, reReHeight;
 let reWidth = window.innerWidth;
 let reHeight = window.innerHeight;
-
+let featureHue = fxHashToVariant(fxhashDecimal, me(p.maxHue) - me(p.minHue)) + 
+    me(p.minHue);
+scope.h = featureHue;
+let featureSaturation = fxHashToVariant(fxhashDecimal, me(p.maxSat) - 
+    me(p.minSat)) + me(p.minSat);
+scope.s = featureSaturation;
+let featureLuminance = fxHashToVariant(fxhashDecimal, me(p.maxLum) - 
+    me(p.minLum)) + me(p.minLum);
+scope.l = featureLuminance;
+    
 setup = function() {
     randomSeed(fxrand() * 1e8);
     colorMode(HSL);
@@ -110,24 +117,19 @@ setup = function() {
     checkRatio();
     reSize = min(reReWidth, reReHeight);
     scope.z = reSize;
-    createCanvas(math.evaluate(p.size, scope), math.evaluate(p.size, scope));
+    createCanvas(me(p.size), me(p.size));
     reScale = width / reWidth;
     scale(reScale);
     configureVariant(featureVariant);
-    featureHue = fxHashToVariant(fxhashDecimal, 
-        math.evaluate(p.maxHue, scope) - math.evaluate(p.minHue, scope)) + 
-        math.evaluate(p.minHue, scope);
+    featureHue = fxHashToVariant(fxhashDecimal, me(p.maxHue) - me(p.minHue)) + 
+        me(p.minHue);
     scope.h = featureHue;
-    featureSaturation = fxHashToVariant(fxhashDecimal,
-        math.evaluate(p.maxSat, scope) - math.evaluate(p.minSat, scope)) + 
-        math.evaluate(p.minSat, scope);
+    featureSaturation = fxHashToVariant(fxhashDecimal, me(p.maxSat) - 
+        me(p.minSat)) + me(p.minSat);
     scope.s = featureSaturation;
-    featureLuminance = fxHashToVariant(fxhashDecimal,
-        math.evaluate(p.maxLum, scope) - math.evaluate(p.minLum, scope)) + 
-        math.evaluate(p.minLum, scope);
+    featureLuminance = fxHashToVariant(fxhashDecimal, me(p.maxLum) - 
+        me(p.minLum)) + me(p.minLum);
     scope.l = featureLuminance;
-    lastIterationFibonacci = getFibonacci(math.evaluate(p.maxIter, scope));
-    lastSpiralFibonacci = getFibonacci(math.evaluate(p.maxSpir, scope));
     frameRate(60);
     noLoop();
 }
@@ -145,19 +147,13 @@ draw = async function() {
     scale(reScale);
     reSize = min(reReWidth, reReHeight);
     scope.z = reSize;
-    translate(
-        math.evaluate(p.transOffsetX, scope),
-        math.evaluate(p.transOffsetY, scope)
-    );
-    background(math.evaluate(p.bgHue, scope), math.evaluate(p.bgSat, scope),
-        math.evaluate(p.bgLum, scope));
-    for (let i = 0; i < math.evaluate(p.maxIter, scope); i++) {
-        translate(
-            math.evaluate(p.transIterX, scope),
-            math.evaluate(p.transIterY, scope)
-        );
+    translate(me(p.transOffsetX), me(p.transOffsetY));
+    background(me(p.bgHue), me(p.bgSat),
+        me(p.bgLum));
+    for (let i = 0; i < me(p.maxIter); i++) {
+        translate(me(p.transIterX), me(p.transIterY));
         let iFib = getFibonacci(i);
-        for (let j = 0; j <= math.evaluate(p.maxSpir, scope); j++) {
+        for (let j = 0; j <= me(p.maxSpir); j++) {
             let jFib = getFibonacci(j);
             scope.a = i;
             scope.b = j;
@@ -165,7 +161,7 @@ draw = async function() {
             scope.d = jFib;
             await drawFunction();
         }
-        rotate(math.evaluate(p.rotate, scope));
+        rotate(me(p.rotate));
     }
     fxpreview();
 }
@@ -180,18 +176,18 @@ function checkRatio(){
     let reReRatio = window.innerWidth / window.innerHeight;
     if (reReRatio > reRatio) {
         reScale = window.innerHeight / reHeight;
-    reReWidth = (window.innerHeight / reHeight) * reWidth;
-    reReHeight = window.innerHeigth;
-  } else {
-    reScale = window.innerWidth / reWidth;
-    reReWidth = window.innerWidth;
-    reReHeight = (window.innerWidth / reWidth) * reHeight;
-  }
+        reReWidth = (window.innerHeight / reHeight) * reWidth;
+        reReHeight = window.innerHeigth;
+    } else {
+        reScale = window.innerWidth / reWidth;
+        reReWidth = window.innerWidth;
+        reReHeight = (window.innerWidth / reWidth) * reHeight;
+    }
 }
 
 async function drawFunction1() {
     scope.h = scope.b;
-    scope.s = math.abs(100 - scope.a * (100 / math.evaluate(p.maxIter, scope)));
+    scope.s = math.abs(100 - scope.a * (100 / me(p.maxIter)));
     await drawCanvas();
 }
 
@@ -202,15 +198,15 @@ async function drawFunction2() {
 }
 
 async function drawFunction3() {
-    scope.h = math.abs(360 - scope.b * (360 / math.evaluate(p.maxSpir, scope)));
-    scope.s = math.abs(100 - scope.a * (100 / math.evaluate(p.maxIter, scope)));
+    scope.h = math.abs(360 - scope.b * (360 / me(p.maxSpir)));
+    scope.s = math.abs(100 - scope.a * (100 / me(p.maxIter)));
     await drawCanvas();
 }
 
 async function drawFunction4() {
     translate(
-        math.evaluate(p.transSpirX, scope),
-        math.evaluate(p.transSpirY, scope),
+        me(p.transSpirX),
+        me(p.transSpirY),
     );
     await drawFunction1();
 }
@@ -222,15 +218,16 @@ async function drawFunction5() {
 }
 
 async function drawCanvas() {
-    strokeWeight(math.evaluate(p.weight, scope));
-    stroke(math.evaluate(p.hue, scope), math.evaluate(p.sat, scope),
-        math.evaluate(p.lum, scope));
-    arc(math.evaluate(p.x, scope), math.evaluate(p.y, scope),
-        math.evaluate(p.w, scope), math.evaluate(p.h, scope),
-        math.evaluate(p.start, scope), math.evaluate(p.stop, scope));
-    if (math.evaluate(p.anim, scope)) {
-        await sleep(math.evaluate(p.delay, scope));
+    strokeWeight(me(p.weight));
+    stroke(me(p.hue), me(p.sat), me(p.lum));
+    arc(me(p.x), me(p.y), me(p.w), me(p.h), me(p.start), me(p.stop));
+    if (me(p.anim)) {
+        await sleep(me(p.delay));
     }
+}
+
+function me(expression) {
+    return math.evaluate(expression, scope);
 }
 
 /**
@@ -291,8 +288,8 @@ function configureVariant(variant = featureVariant) {
             params = {
                 "x": "b",
                 "y": "b",
-                "w": "b",
-                "h": "c",
+                "w": "pow(c, b)",
+                "h": "pow(c, b)",
                 "start": "a",
                 "stop": "b * f",
                 "rotate": "f",
@@ -363,6 +360,7 @@ function configureVariant(variant = featureVariant) {
             };
             break;
         case 5:
+            // https://www.fxhash.xyz/generative/25018
             drawFunction = drawFunction2;
             params = {
                 "x": "b",
