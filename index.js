@@ -34,7 +34,7 @@ const phi = math.phi;
 const sqrt5 = math.sqrt(5);
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
 //~ const featureVariant = fxHashToVariant(fxhashDecimal, 18);
-const featureVariant = 6;
+const featureVariant = 8;
 //~ const featureVariant = -1;
 let drawFunction = drawFunction1;
 let p = {
@@ -374,6 +374,7 @@ function configureVariant(variant = featureVariant) {
             };
             break;
         case 6:
+            // https://www.fxhash.xyz/generative/25309
             drawFunction = drawFunction1;
             params = {
                 "x": "a * b",
@@ -384,6 +385,7 @@ function configureVariant(variant = featureVariant) {
             };
             break;
         case 7:
+            // https://www.fxhash.xyz/generative/25381
             drawFunction = drawFunction4;
             params = {
                 "x": "b",
@@ -394,6 +396,7 @@ function configureVariant(variant = featureVariant) {
             };
             break;
         case 8:
+            // https://www.fxhash.xyz/generative/25561
             drawFunction = drawFunction3;
             params = {
                 "x": "a + b",

@@ -2,7 +2,7 @@
 
 find . -type f -not -path './.git*' -not -name '*.py' -not -name '*.sh' -exec chmod 0644 '{}' \;
 find . -type f -not -path './.git*' -name '*.py' -name '*.sh' -exec chmod 0754 '{}' \;
-find . -type f -not -path './.git*' -exec dos2unix '{}' \;
+#find . -type f -not -path './.git*' -exec dos2unix '{}' \;
 
 LIST=( \
 "fibonacci.js" \
