@@ -2,14 +2,16 @@
 """This python script generates a javascript dictionary with the \
 fibonacci sequence, index as keys and fibonacci numbers as values."""
 
-out_file: str = "fibonacci.js"
-
+import json
+import os
 import sys
+
+out_file: str = os.path.join("public", "fibonacci.js")
 
 try:
     limit: str = sys.argv[1]
 except:
-    limit: str = 360
+    limit: str = 3600
     print(f"Usage: `{sys.argv[0]} [LIMIT]`. Using {limit} as default.")
 
 try:
@@ -26,3 +28,4 @@ import json
 
 with open(out_file, 'w') as f:
     f.write(json.dumps(d))
+    f.write(f"fibonacci_index = {json.dumps(d)}")
