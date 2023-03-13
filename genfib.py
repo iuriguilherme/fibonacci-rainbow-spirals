@@ -27,5 +27,4 @@ d: dict[str, str] = {
 import json
 
 with open(out_file, 'w') as f:
-    f.write(json.dumps(d))
     f.write(f"fibonacci_index = {json.dumps(d)}")
