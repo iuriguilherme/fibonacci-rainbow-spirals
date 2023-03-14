@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals v3
- * @version 3.0.0  
+ * @version 3.0.1  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -44,7 +44,7 @@ const lastVariant = 18;
 //~ const featureVariant = fxHashToVariant(fxhashDecimal, lastVariant);
 //~ const featureVariant = math.max(2, fxHashToVariant(fxhashDecimal, limit));
 //~ const featureVariant = -1;
-const featureVariant = 9;
+const featureVariant = 10;
 const BUFF_SIZE = 1080;
 const BUFF_WID_MOD = 1;
 const BUFF_HEI_MOD = 1;
@@ -54,72 +54,93 @@ const CANVAS_PIXEL_DENSITY = 1;
 const BUFF_PIXEL_DENSITY = 4;
 const delayLimit = 6000;
 let p = {
-    "x": "0",
-    "y": "0",
-    "w": "c",
-    "h": "c",
-    "start": "0",
-    "stop": "e",
-    "rotate": "e",
-    "weight": "u",
-    "hue": "h",
-    "sat": "s",
-    "lum": "l",
-    "transOffsetX": "z / 2",
-    "transOffsetY": "z / 2",
-    "transIterX": "a",
-    "transIterY": "a",
-    "transSpirX": "b",
-    "transSpirY": "b",
-    "bgHue": "h",
-    "bgSat": "s",
-    "bgLum": "l",
-    "delay": "r",
-    "maxHue": "hx",
-    "minHue": "hn",
-    "maxSat": "sx",
-    "minSat": "sn",
-    "maxLum": "lx",
-    "minLum": "ln",
-    "maxIter": "i",
-    "maxSpir": "j",
-    "anim": "n",
-    "size": "z"
+  "x": "0",
+  "y": "0",
+  "w": "c",
+  "h": "c",
+  "start": "0",
+  "stop": "e",
+  "rotate": "e",
+  "weight": "u",
+  "hue": "h",
+  "sat": "s",
+  "lum": "l",
+  "transOffsetX": "z / 2",
+  "transOffsetY": "z / 2",
+  "transIterX": "a",
+  "transIterY": "a",
+  "transSpirX": "b",
+  "transSpirY": "b",
+  "bgHue": "h",
+  "bgSat": "s",
+  "bgLum": "l",
+  "delay": "r",
+  "maxHue": "hx",
+  "minHue": "hn",
+  "maxSat": "sx",
+  "minSat": "sn",
+  "maxLum": "lx",
+  "minLum": "ln",
+  "maxIter": "i",
+  "maxSpir": "j",
+  "anim": "n",
+  "size": "z"
 };
 let scope = {
-    "a": 0,
-    "b": 0,
-    "c": 0,
-    "d": 0,
-    "e": half_pi,
-    "f": phi,
-    "g": pi,
-    "h": 360,
-    "hx": 300,
-    "hn": 60,
-    "i": 100,
-    "j": 360,
-    "n": 1,
-    "r": 1,
-    "s": 100,
-    "sx": 100,
-    "sn": 75,
-    "l": 100,
-    "lx": 60,
-    "ln": 30,
-    "u": 1,
-    "w": window.innerWidth / window.innerHeight,
-    "x": window.innerWidth,
-    "y": window.innerHeight,
-    "z": math.min(window.innerWidth, window.innerHeight)
+  "a": 0,
+  "b": 0,
+  "c": 0,
+  "d": 0,
+  "e": half_pi,
+  "f": phi,
+  "g": pi,
+  "h": 360,
+  "hx": 300,
+  "hn": 60,
+  "i": 100,
+  "j": 360,
+  "n": 1,
+  "r": 1,
+  "s": 100,
+  "sx": 100,
+  "sn": 75,
+  "l": 100,
+  "lx": 60,
+  "ln": 30,
+  "u": 1,
+  "w": window.innerWidth / window.innerHeight,
+  "x": window.innerWidth,
+  "y": window.innerHeight,
+  "z": math.min(window.innerWidth, window.innerHeight)
 };
 let variant = featureVariant;
 let width = window.innerWidth;
 let height = window.innerHeight;
-let x, y, size, scale, ratio, reWidth, reHeight, reRatio, canvas, xWeigths,
-  yWeigths, buffer, scaleFactor, sizeX, sizeY, reSize, reScale, 
-  reReWidth, reReHeight, featureHue, featureLuminance, featureSaturation,
-  drawInnerFunction, drawFunction, ratioFunction, resizeFunction, setupFunction;
+let 
+  buffer,
+  canvas,
+  drawFunction,
+  drawInnerFunction,
+  featureHue,
+  featureLuminance,
+  featureSaturation,
+  ratio,
+  ratioFunction,
+  reHeight,
+  reRatio,
+  reReHeight,
+  reReWidth,
+  reScale,
+  reSize,
+  resizeFunction,
+  reWidth,
+  scale,
+  scaleFactor,
+  setupFunction,
+  size,
+  sizeX,
+  sizeY
+;
 
 let sketch = function(p5) {
   drawInnerFunction = drawInnerFunction1;
@@ -544,6 +565,7 @@ resizeFunction: ${resizeFunction.name}
         };
         break;
       case 9:
+        // https://www.fxhash.xyz/generative/25935
         drawFunction = drawFunction1;
         drawInnerFunction = drawInnerFunction1;
         ratioFunction = checkRatio1;
