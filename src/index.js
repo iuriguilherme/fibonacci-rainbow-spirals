@@ -556,12 +556,7 @@ resizeFunction: ${resizeFunction.name}
           "h": "d",
           "start": "c",
           "stop": "b * f",
-          //~ "maxHue": "180",
-          //~ "minHue": "90",
-          //~ "maxSat": "75",
-          //~ "minSat": "60",
-          //~ "maxLum": "51",
-          //~ "minLum": "36"
+          "maxHue": "180"
         };
         break;
       case 10:
