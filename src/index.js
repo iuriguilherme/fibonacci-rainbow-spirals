@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals v3
- * @version 3.0.1  
+ * @version 3.0.2  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -29,7 +29,7 @@ import p5 from "p5";
 import { create, all } from "mathjs";
 const math = create(all, {"randomSeed": seed})
 
-const version = "3.0.0";
+const version = "3.0.2";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 // https://github.com/fxhash/fxhash-webpack-boilerplate/issues/20
 const properAlphabet = 
@@ -182,24 +182,25 @@ let sketch = function(p5) {
     p5.noLoop();
   }
   p5.draw = async function() {
-    console.log(`
-fx(hash): ${fxhashTrunc}
-fx(hash) base 10: ${fxhashDecimal}
-Feature: ${featureVariant}
-Current variant: ${variant}
-Hue: ${featureHue}
-Saturation: ${featureSaturation}
-Luminance: ${featureLuminance}
-drawInnerFunction: ${drawInnerFunction.name}
-ratioFunction: ${ratioFunction.name}
-resizeFunction: ${resizeFunction.name}
-`)
     for (let k in p) {
       console.log("params[" + k + "]: " + p[k]);
     }
     for (let k in scope) {
       console.log("scope[" + k + "]: " + scope[k]);
     }
+    console.log(`
+fx(hash): ${fxhashTrunc}
+fx(hash) base 10: ${fxhashDecimal}
+Feature: ${featureVariant}
+Hue: ${featureHue}
+Saturation: ${featureSaturation}
+Luminance: ${featureLuminance}
+Current variant: ${variant}
+drawFunction: ${drawFunction.name}
+drawInnerFunction: ${drawInnerFunction.name}
+ratioFunction: ${ratioFunction.name}
+resizeFunction: ${resizeFunction.name}
+`)
     await drawFunction();
     fxpreview();
   }
@@ -289,7 +290,7 @@ resizeFunction: ${resizeFunction.name}
     sizeX = size * BUFF_WID_MOD;
     sizeY = size * BUFF_HEI_MOD;
     canvas = p5.createCanvas(sizeX, sizeY);
-    reScale = p5.width / reWidth;
+    scale = p5.width / width;
     p5.scale(reScale);
     p5.pixelDensity(CANVAS_PIXEL_DENSITY);
   }
@@ -312,15 +313,15 @@ resizeFunction: ${resizeFunction.name}
    * @description Resize screen helper function v2
    */
   function checkRatio2() {
-    reRatio = p5.windowWidth / p5.windowHeight;
+    let reRatio = p5.windowWidth / p5.windowHeight;
     if (reRatio > ratio) {
       scale = p5.windowHeight / p5.height;
-      reWidth = (p5.windowHeight / p5.height) * p5.width;
-      reHeight = p5.windowHeight;
+      width = (p5.windowHeight / p5.height) * p5.width;
+      height = p5.windowHeight;
     } else {
       scale = p5.windowWidth / p5.width;
-      reWidth = p5.windowWidth;
-      reHeight = (p5.windowWidth / p5.width) * p5.height;
+      width = p5.windowWidth;
+      height = (p5.windowWidth / p5.width) * p5.height;
     }
   }
   function windowResize1() {
@@ -358,20 +359,66 @@ resizeFunction: ${resizeFunction.name}
       p5.rotate(me(p.rotate));
     }
   }
+  async function drawFunction2() {
+    p5.noFill();
+    ratioFunction();
+    p5.scale(scale);
+    size = p5.min(width, height);
+    scope.z = size;
+    p5.translate(me(p.transOffsetX), me(p.transOffsetY));
+    p5.background(me(p.bgHue), me(p.bgSat),
+      me(p.bgLum));
+    for (let i = 0; i < me(p.maxIter); i++) {
+      p5.translate(me(p.transIterX), me(p.transIterY));
+      let iFib = getFibonacci(i);
+      for (let j = 0; j <= me(p.maxSpir); j++) {
+        let jFib = getFibonacci(j);
+        scope.a = i;
+        scope.b = j;
+        scope.c = iFib;
+        scope.d = jFib;
+        await drawInnerFunction();
+      }
+      p5.rotate(me(p.rotate));
+    }
+  }
+  async function drawFunction3() {
+    p5.noFill();
+    ratioFunction();
+    p5.scale(scale);
+    size = p5.min(width, height);
+    scope.z = size;
+    p5.translate(me(p.transOffsetX), me(p.transOffsetY));
+    p5.background(me(p.bgHue), me(p.bgSat),
+      me(p.bgLum));
+    for (let i = 0; i < me(p.maxIter); i++) {
+      p5.translate(me(p.transIterX), me(p.transIterY));
+      let iFib = getFibonacci(i);
+      for (let j = 0; j <= me(p.maxSpir); j++) {
+        let jFib = getFibonacci(j);
+        scope.a = i;
+        scope.b = j;
+        scope.c = iFib;
+        scope.d = jFib;
+        await drawInnerFunction();
+      }
+      p5.rotate(me(p.rotate));
+    }
+  }
   async function drawInnerFunction1() {
     scope.h = scope.b;
     scope.s = math.abs(100 - scope.a * (100 / me(p.maxIter)));
-    await drawCanvas();
+    await drawSpiral();
   }
   async function drawInnerFunction2() {
     scope.h = scope.b;
     scope.s = scope.a;
-    await drawCanvas();
+    await drawSpiral();
   }
   async function drawInnerFunction3() {
     scope.h = math.abs(360 - scope.b * (360 / me(p.maxSpir)));
     scope.s = math.abs(100 - scope.a * (100 / me(p.maxIter)));
-    await drawCanvas();
+    await drawSpiral();
   }
   async function drawInnerFunction4() {
     p5.translate(
@@ -383,9 +430,9 @@ resizeFunction: ${resizeFunction.name}
   async function drawInnerFunction5() {
     scope.h = scope.b;
     scope.s = math.abs(100 - scope.a);
-    await drawCanvas();
+    await drawSpiral();
   }
-  async function drawCanvas() {
+  async function drawSpiral() {
     p5.strokeWeight(me(p.weight));
     p5.stroke(me(p.hue), me(p.sat), me(p.lum));
     p5.arc(me(p.x), me(p.y), me(p.w), me(p.h), me(p.start), me(p.stop));
@@ -401,28 +448,76 @@ resizeFunction: ${resizeFunction.name}
     let params = {};
     switch (variant) {
       case -1:
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction2;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
+        //~ drawFunction = drawFunction1;
+        drawFunction = drawFunction3;
+        //~ drawInnerFunction = drawInnerFunction1;
+        drawInnerFunction = drawInnerFunction1;
+        //~ ratioFunction = checkRatio1;
+        ratioFunction = checkRatio2;
+        //~ resizeFunction = windowResize1;
+        resizeFunction = windowResize2;
+        //~ setupFunction = setupFunction1;
+        setupFunction = setupFunction2;
         params = {
+          //~ "x": "0",
+          //~ "x": "b",
           "x": "b",
-          "y": "b",
-          "w": "pow(c, b)",
-          "h": "pow(c, b)",
-          "start": "a",
-          "stop": "b * f",
-          "rotate": "f",
-          //~ "maxIter": "300",
-          //~ "maxSpir": "720",
+          //~ "y": "0",
+          //~ "y": "b",
+          "y": "a * b",
+          //~ "w": "c",
+          //~ "w": "pow(c, b)",
+          "w": "a * c",
+          //~ "h": "c",
+          //~ "h": "pow(c, b)",
+          "h": "b * c",
+          //~ "h": "b",
+          //~ "start": "0",
+          //~ "start": "a",
+          "start": "c",
+          //~ "stop": "e",
+          //~ "stop": "b * f",
+          //~ "rotate": "e",
+          //~ "rotate": "f",
+          //~ "weight": "u",
+          //~ "hue": "h",
+          //~ "sat": "s",
+          //~ "lum": "l",
+          //~ "transOffsetX": "z / 2",
+          //~ "transOffsetX": "z / 4",
+          //~ "transOffsetY": "z / 2",
+          //~ "transOffsetY": "z / 4",
+          //~ "transIterX": "a",
+          //~ "transIterX": "a",
+          //~ "transIterY": "a",
+          //~ "transIterY": "a",
+          //~ "transSpirX": "b",
+          //~ "transSpirX": "0",
+          //~ "transSpirY": "b",
+          //~ "transSpirY": "0",
+          //~ "bgHue": "h",
+          //~ "bgSat": "s",
+          //~ "bgLum": "l",
+          //~ "delay": "r",
+          //~ "maxHue": "hx",
           //~ "maxHue": "210",
+          //~ "minHue": "hn",
           //~ "minHue": "90",
+          //~ "maxSat": "sx",
           //~ "maxSat": "75",
+          //~ "minSat": "sn",
           //~ "minSat": "60",
+          //~ "maxLum": "lx",
           //~ "maxLum": "60",
-          //~ "minLum": "45",
+          //~ "minLum": "ln",
+          //~ "minLum": "60",
+          //~ "maxIter": "i",
+          //~ "maxIter": "300",
+          //~ "maxSpir": "j",
+          //~ "maxSpir": "720",
+          //~ "anim": "n",
           //~ "anim": "0",
+          //~ "size": "z",
         };
         break;
       case 0:
@@ -582,18 +677,24 @@ resizeFunction: ${resizeFunction.name}
         };
         break;
       case 10:
-        drawFunction = drawFunction1;
+        //~ drawFunction = drawFunction1;
         drawInnerFunction = drawInnerFunction2;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
+        //~ ratioFunction = checkRatio1;
+        //~ resizeFunction = windowResize1;
+        //~ setupFunction = setupFunction1;
         params = {
           "x": "a",
           "y": "b",
           "w": "a",
           "h": "a",
           "start": "c",
-          "stop": "g / a"
+          "stop": "g / a",
+          "maxHue": "300",
+          "minHue": "180",
+          "maxSat": "90",
+          "minSat": "60",
+          "minLum": "45",
+          "maxIter": "180"
         };
         break;
       case 11:
