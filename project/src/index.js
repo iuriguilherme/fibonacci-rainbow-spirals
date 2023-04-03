@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals v3
- * @version 3.1.0  
+ * @version 3.1.1  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -23,6 +23,9 @@
  * 
  */
 
+const name = "fibonacci-rainbow-spirals";
+const version = "3.1.1";
+
 const seed = fxrand() * 1e8;
 
 import p5 from "p5";
@@ -31,11 +34,10 @@ const math = create(all, {"randomSeed": seed});
 
 import { fibonacci_index } from "./fibonacci.js";
 
-const version = "3.0.2";
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 // https://github.com/fxhash/fxhash-webpack-boilerplate/issues/20
 const properAlphabet = 
-    "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+    "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const variantFactor = 3.904e-87; // This number is magic
 const pi = math.pi;
 const half_pi = math.pi / 2;
@@ -46,7 +48,7 @@ const lastVariant = 18;
 //~ const featureVariant = fxHashToVariant(fxhashDecimal, lastVariant);
 //~ const featureVariant = math.max(2, fxHashToVariant(fxhashDecimal, limit));
 //~ const featureVariant = -1;
-const featureVariant = 10;
+const featureVariant = 11;
 const BUFF_SIZE = 1080;
 const BUFF_WID_MOD = 1;
 const BUFF_HEI_MOD = 1;
@@ -162,9 +164,12 @@ let sketch = function(p5) {
     me(p.minLum)) + me(p.minLum);
   scope.l = featureLuminance;
   
-  p5.setup = function() {
+  p5.preload = function() {
     p5.randomSeed(seed);
     p5.noiseSeed(seed);
+  }
+  
+  p5.setup = function() {
     p5.colorMode(p5.HSL);
     
     configureVariant(variant);
@@ -191,6 +196,7 @@ let sketch = function(p5) {
       console.log("scope[" + k + "]: " + scope[k]);
     }
     console.log(`
+[${name} v${version}]
 fx(hash): ${fxhashTrunc}
 fx(hash) base 10: ${fxhashDecimal}
 Feature: ${featureVariant}
@@ -204,13 +210,13 @@ ratioFunction: ${ratioFunction.name}
 resizeFunction: ${resizeFunction.name}
 `)
     await drawFunction();
-    fxpreview();
+    $fx.preview();
   }
   p5.windowResized = function() {
     resizeFunction();
   }
   p5.keyTyped = function() {
-    switch (p5.key) {
+    switch (p5.key.toLowerCase()) {
       case 'r':
         console.log("redrawing canvas...");
         p5.redraw();
@@ -220,41 +226,40 @@ resizeFunction: ${resizeFunction.name}
         resizeFunction();
         break;
       case 's':
-        let file = 
-          `fibonacci_rainbow_spirals_v${version}_${featureVariant}.png`;
+        let file = `${name}_v${version}_${featureVariant}.png`;
         console.log(`saving canvas to ${file}...`);
         p5.saveCanvas(canvas, file);
         break;
-      case 'a':
-        variant = math.max(0, variant - 1);
-        configureVariant(variant);
-        featureHue = fxHashToVariant(fxhashDecimal,
-          me(p.maxHue) - me(p.minHue)) + me(p.minHue);
-        scope.h = featureHue;
-        featureSaturation = fxHashToVariant(fxhashDecimal,
-          me(p.maxSat) - me(p.minSat)) + me(p.minSat);
-        scope.s = featureSaturation;
-        featureLuminance = fxHashToVariant(fxhashDecimal,
-          me(p.maxLum) - me(p.minLum)) + me(p.minLum);
-        scope.l = featureLuminance;
-        console.log(`variant changed to ${variant}`);
-        p5.redraw();
-        break;
-      case 'd':
-        variant = math.min(lastVariant, variant + 1);
-        configureVariant(variant);
-        featureHue = fxHashToVariant(fxhashDecimal,
-          me(p.maxHue) - me(p.minHue)) + me(p.minHue);
-        scope.h = featureHue;
-        featureSaturation = fxHashToVariant(fxhashDecimal,
-          me(p.maxSat) - me(p.minSat)) + me(p.minSat);
-        scope.s = featureSaturation;
-        featureLuminance = fxHashToVariant(fxhashDecimal,
-          me(p.maxLum) - me(p.minLum)) + me(p.minLum);
-        scope.l = featureLuminance;
-        console.log(`variant changed to ${variant}`);
-        p5.redraw();
-        break;
+      //~ case 'a':
+        //~ variant = math.max(0, variant - 1);
+        //~ configureVariant(variant);
+        //~ featureHue = fxHashToVariant(fxhashDecimal,
+          //~ me(p.maxHue) - me(p.minHue)) + me(p.minHue);
+        //~ scope.h = featureHue;
+        //~ featureSaturation = fxHashToVariant(fxhashDecimal,
+          //~ me(p.maxSat) - me(p.minSat)) + me(p.minSat);
+        //~ scope.s = featureSaturation;
+        //~ featureLuminance = fxHashToVariant(fxhashDecimal,
+          //~ me(p.maxLum) - me(p.minLum)) + me(p.minLum);
+        //~ scope.l = featureLuminance;
+        //~ console.log(`variant changed to ${variant}`);
+        //~ p5.redraw();
+        //~ break;
+      //~ case 'd':
+        //~ variant = math.min(lastVariant, variant + 1);
+        //~ configureVariant(variant);
+        //~ featureHue = fxHashToVariant(fxhashDecimal,
+          //~ me(p.maxHue) - me(p.minHue)) + me(p.minHue);
+        //~ scope.h = featureHue;
+        //~ featureSaturation = fxHashToVariant(fxhashDecimal,
+          //~ me(p.maxSat) - me(p.minSat)) + me(p.minSat);
+        //~ scope.s = featureSaturation;
+        //~ featureLuminance = fxHashToVariant(fxhashDecimal,
+          //~ me(p.maxLum) - me(p.minLum)) + me(p.minLum);
+        //~ scope.l = featureLuminance;
+        //~ console.log(`variant changed to ${variant}`);
+        //~ p5.redraw();
+        //~ break;
       case 'z':
         scope.r = math.max(0, scope.r - 100);
         scope.n = 1;
@@ -646,7 +651,10 @@ resizeFunction: ${resizeFunction.name}
         };
         break;
       case 8:
-        // https://www.fxhash.xyz/generative/25561
+        /*
+         * This one is messed up, not suitable for fx(hash)
+         * https://www.fxhash.xyz/generative/25561
+         */
         drawFunction = drawFunction1;
         drawInnerFunction = drawInnerFunction3;
         ratioFunction = checkRatio1;
@@ -679,11 +687,8 @@ resizeFunction: ${resizeFunction.name}
         };
         break;
       case 10:
-        //~ drawFunction = drawFunction1;
+        //  https://www.fxhash.xyz/generative/26105
         drawInnerFunction = drawInnerFunction2;
-        //~ ratioFunction = checkRatio1;
-        //~ resizeFunction = windowResize1;
-        //~ setupFunction = setupFunction1;
         params = {
           "x": "a",
           "y": "b",
@@ -700,11 +705,11 @@ resizeFunction: ${resizeFunction.name}
         };
         break;
       case 11:
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction1;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
+        //~ drawFunction = drawFunction1;
+        //~ drawInnerFunction = drawInnerFunction1;
+        //~ ratioFunction = checkRatio1;
+        //~ resizeFunction = windowResize1;
+        //~ setupFunction = setupFunction1;
         params = {
           "x": "a",
           "y": "b",
@@ -899,9 +904,9 @@ function fxHashToVariant(decimalHash, maxVariants, inverse = false) {
   return variant;
 }
 
-window.$fxhashFeatures = {
+$fx.features({
   //~ "fx(variant)": featureVariant,
   "fx(hue)": featureHue,
   "fx(saturation)": featureSaturation,
-  "fx(luminance)": featureLuminance
-}
+  "fx(luminance)": featureLuminance,
+});

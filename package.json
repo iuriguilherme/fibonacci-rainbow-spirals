@@ -1,6 +1,6 @@
 {
   "name": "fibonacci-rainbow-spirals",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "a generative token for fxhash.xyz",
   "main": "index.js",
   "author": "iuriguilherme",
