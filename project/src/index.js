@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals v3
- * @version 3.0.2  
+ * @version 3.1.0  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -27,7 +27,9 @@ const seed = fxrand() * 1e8;
 
 import p5 from "p5";
 import { create, all } from "mathjs";
-const math = create(all, {"randomSeed": seed})
+const math = create(all, {"randomSeed": seed});
+
+import { fibonacci_index } from "./fibonacci.js";
 
 const version = "3.0.2";
 const sleep = ms => new Promise(r => setTimeout(r, ms));

@@ -6,7 +6,7 @@ import json
 import os
 import sys
 
-out_file: str = os.path.join("public", "fibonacci.js")
+out_file: str = os.path.join("project", "src", "fibonacci.js")
 
 try:
     limit: str = sys.argv[1]
