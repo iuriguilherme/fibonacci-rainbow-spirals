@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals v3
- * @version 3.1.1  
+ * @version 4.0.0  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -24,7 +24,7 @@
  */
 
 const name = "fibonacci-rainbow-spirals";
-const version = "3.1.1";
+const version = "4.0.0";
 
 const seed = fxrand() * 1e8;
 
@@ -33,22 +33,23 @@ import { create, all } from "mathjs";
 const math = create(all, {"randomSeed": seed});
 
 import { fibonacci_index } from "./fibonacci.js";
+import { configureVariation } from "./params.js";
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-// https://github.com/fxhash/fxhash-webpack-boilerplate/issues/20
+// https://github.com/fxhash/fxhash-boilerplate/issues/20
 const properAlphabet = 
     "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-const variantFactor = 3.904e-87; // This number is magic
+const variationFactor = 3.904e-87; // This number is magic
 const pi = math.pi;
 const half_pi = math.pi / 2;
 const phi = math.phi;
 const sqrt5 = math.sqrt(5);
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
-const lastVariant = 18;
-//~ const featureVariant = fxHashToVariant(fxhashDecimal, lastVariant);
-//~ const featureVariant = math.max(2, fxHashToVariant(fxhashDecimal, limit));
-//~ const featureVariant = -1;
-const featureVariant = 11;
+const lastVariation = 18;
+const featureVariation = math.max(1, fxHashToVariation(fxhashDecimal,
+  lastVariation));
+//~ const featureVariation = 0;
+//~ const featureVariation = 8;
 const BUFF_SIZE = 1080;
 const BUFF_WID_MOD = 1;
 const BUFF_HEI_MOD = 1;
@@ -57,46 +58,16 @@ const BUFF_HEI = BUFF_SIZE * BUFF_HEI_MOD;
 const CANVAS_PIXEL_DENSITY = 1;
 const BUFF_PIXEL_DENSITY = 4;
 const delayLimit = 6000;
-let p = {
-  "x": "0",
-  "y": "0",
-  "w": "c",
-  "h": "c",
-  "start": "0",
-  "stop": "e",
-  "rotate": "e",
-  "weight": "u",
-  "hue": "h",
-  "sat": "s",
-  "lum": "l",
-  "transOffsetX": "z / 2",
-  "transOffsetY": "z / 2",
-  "transIterX": "a",
-  "transIterY": "a",
-  "transSpirX": "b",
-  "transSpirY": "b",
-  "bgHue": "h",
-  "bgSat": "s",
-  "bgLum": "l",
-  "delay": "r",
-  "maxHue": "hx",
-  "minHue": "hn",
-  "maxSat": "sx",
-  "minSat": "sn",
-  "maxLum": "lx",
-  "minLum": "ln",
-  "maxIter": "i",
-  "maxSpir": "j",
-  "anim": "n",
-  "size": "z"
-};
 let scope = {
   "a": 0,
+  "af": 0,
   "b": 0,
   "c": 0,
   "d": 0,
   "e": half_pi,
   "f": phi,
+  "fd": fxhashDecimal,
+  "ft": getRandFxHash(),
   "g": pi,
   "h": 360,
   "hx": 300,
@@ -117,50 +88,120 @@ let scope = {
   "y": window.innerHeight,
   "z": math.min(window.innerWidth, window.innerHeight)
 };
-let variant = featureVariant;
+let variation = featureVariation;
 let width = window.innerWidth;
 let height = window.innerHeight;
 let 
   buffer,
   canvas,
-  drawFunction,
-  drawInnerFunction,
+  //~ drawFunction,
+  //~ drawInnerFunction,
   featureHue,
   featureLuminance,
   featureSaturation,
+  functionMap,
+  //~ p,
   ratio,
-  ratioFunction,
+  //~ ratioFunction,
   reHeight,
   reRatio,
   reReHeight,
   reReWidth,
   reScale,
   reSize,
-  resizeFunction,
+  //~ resizeFunction,
   reWidth,
   scale,
   scaleFactor,
-  setupFunction,
+  //~ setupFunction,
   size,
   sizeX,
   sizeY
 ;
+var p;
 
 let sketch = function(p5) {
-  drawInnerFunction = drawInnerFunction1;
-  drawFunction = drawFunction1;
-  ratioFunction = checkRatio1;
-  resizeFunction = windowResize1;
-  setupFunction = setupFunction1;
+  
+  functionMap = {
+    "draw": {
+      "1": drawFunction1,
+      "2": drawFunction2,
+      "3": drawFunction3,
+      "4": drawFunction4,
+      "5": drawFunction5,
+    },
+    "drawInner": {
+      "1": drawInnerFunction1,
+      "2": drawInnerFunction2,
+      "3": drawInnerFunction3,
+      "4": drawInnerFunction4,
+      "5": drawInnerFunction5,
+      "6": drawInnerFunction6,
+      "7": drawInnerFunction7,
+      "8": drawInnerFunction8,
+      "9": drawInnerFunction9,
+    },
+    "ratio": {
+      "1": checkRatio1,
+      "2": checkRatio2,
+    },
+    "resize": {
+      "1": windowResize1,
+      "2": windowResize2,
+    },
+    "setup": {
+      "1": setupFunction1,
+      "2": setupFunction2,
+    },
+  }
+  p = {
+    "x": "0",
+    "y": "0",
+    "w": "c",
+    "h": "c",
+    "start": "0",
+    "stop": "e",
+    "rotate": "e",
+    "rotateStart": "fd",
+    "weight": "u",
+    "hue": "h",
+    "sat": "s",
+    "lum": "l",
+    "transOffsetX": "z / 2",
+    "transOffsetY": "z / 2",
+    "transIterX": "a",
+    "transIterY": "a",
+    "transSpirX": "b",
+    "transSpirY": "b",
+    "bgHue": "h",
+    "bgSat": "s",
+    "bgLum": "l",
+    "delay": "r",
+    "maxHue": "hx",
+    "minHue": "hn",
+    "maxSat": "sx",
+    "minSat": "sn",
+    "maxLum": "lx",
+    "minLum": "ln",
+    "maxIter": "i",
+    "maxSpir": "j",
+    "anim": "n",
+    "size": "z",
+    "drawInnerFunction": "1",
+    "drawFunction": "1",
+    "ratioFunction": "1",
+    "resizeFunction": "1",
+    "setupFunction": "1",
+  };
   reWidth = window.innerWidth;
   reHeight = window.innerHeight;
-  featureHue = fxHashToVariant(fxhashDecimal, me(p.maxHue) - me(p.minHue)) + 
+  featureHue = fxHashToVariation(fxhashDecimal, me(p.maxHue) - me(p.minHue)) + 
     me(p.minHue);
   scope.h = featureHue;
-  featureSaturation = fxHashToVariant(fxhashDecimal, me(p.maxSat) - 
+  featureSaturation = fxHashToVariation(fxhashDecimal, me(p.maxSat) - 
     me(p.minSat)) + me(p.minSat);
   scope.s = featureSaturation;
-  featureLuminance = fxHashToVariant(fxhashDecimal, me(p.maxLum) - 
+  featureLuminance = fxHashToVariation(fxhashDecimal, me(p.maxLum) - 
     me(p.minLum)) + me(p.minLum);
   scope.l = featureLuminance;
   
@@ -172,18 +213,18 @@ let sketch = function(p5) {
   p5.setup = function() {
     p5.colorMode(p5.HSL);
     
-    configureVariant(variant);
-    featureHue = fxHashToVariant(fxhashDecimal, me(p.maxHue) - me(p.minHue)) + 
-      me(p.minHue);
+    configureVariation(p, variation);
+    featureHue = fxHashToVariation(fxhashDecimal, me(p.maxHue) - me(p.minHue)) 
+      + me(p.minHue);
     scope.h = featureHue;
-    featureSaturation = fxHashToVariant(fxhashDecimal, me(p.maxSat) - 
+    featureSaturation = fxHashToVariation(fxhashDecimal, me(p.maxSat) - 
       me(p.minSat)) + me(p.minSat);
     scope.s = featureSaturation;
-    featureLuminance = fxHashToVariant(fxhashDecimal, me(p.maxLum) - 
+    featureLuminance = fxHashToVariation(fxhashDecimal, me(p.maxLum) - 
       me(p.minLum)) + me(p.minLum);
     scope.l = featureLuminance;
     
-    setupFunction();
+    functionMap["setup"][p["setupFunction"]]();
     
     p5.frameRate(60);
     p5.noLoop();
@@ -199,21 +240,22 @@ let sketch = function(p5) {
 [${name} v${version}]
 fx(hash): ${fxhashTrunc}
 fx(hash) base 10: ${fxhashDecimal}
-Feature: ${featureVariant}
-Hue: ${featureHue}
-Saturation: ${featureSaturation}
-Luminance: ${featureLuminance}
-Current variant: ${variant}
-drawFunction: ${drawFunction.name}
-drawInnerFunction: ${drawInnerFunction.name}
-ratioFunction: ${ratioFunction.name}
-resizeFunction: ${resizeFunction.name}
+fx(variation): ${featureVariation}
+fx(hue): ${featureHue}
+fx(saturation): ${featureSaturation}
+fx(luminance): ${featureLuminance}
+Current variation: ${variation}
+drawFunction: ${functionMap["draw"][p["drawFunction"]].name}
+drawInnerFunction: ${functionMap["drawInner"][p["drawInnerFunction"]].name}
+ratioFunction: ${functionMap["ratio"][p["ratioFunction"]].name}
+resizeFunction: ${functionMap["resize"][p["resizeFunction"]].name}
 `)
-    await drawFunction();
+    await functionMap["draw"][p["drawFunction"]]();
     $fx.preview();
+    console.log(`[${name} v${version}]: finished drawing`);
   }
   p5.windowResized = function() {
-    resizeFunction();
+    functionMap["resize"][p["resizeFunction"]]();
   }
   p5.keyTyped = function() {
     switch (p5.key.toLowerCase()) {
@@ -223,41 +265,23 @@ resizeFunction: ${resizeFunction.name}
         break;
       case 'f':
         console.log("resizing window...");
-        resizeFunction();
+        functionMap["resize"][p["resizeFunction"]]();
         break;
       case 's':
-        let file = `${name}_v${version}_${featureVariant}.png`;
+        let file = `${name}_ver${version}_var${variation}.png`;
         console.log(`saving canvas to ${file}...`);
         p5.saveCanvas(canvas, file);
         break;
       //~ case 'a':
-        //~ variant = math.max(0, variant - 1);
-        //~ configureVariant(variant);
-        //~ featureHue = fxHashToVariant(fxhashDecimal,
-          //~ me(p.maxHue) - me(p.minHue)) + me(p.minHue);
-        //~ scope.h = featureHue;
-        //~ featureSaturation = fxHashToVariant(fxhashDecimal,
-          //~ me(p.maxSat) - me(p.minSat)) + me(p.minSat);
-        //~ scope.s = featureSaturation;
-        //~ featureLuminance = fxHashToVariant(fxhashDecimal,
-          //~ me(p.maxLum) - me(p.minLum)) + me(p.minLum);
-        //~ scope.l = featureLuminance;
-        //~ console.log(`variant changed to ${variant}`);
+        //~ variation = math.max(0, variation - 1);
+        //~ configureVariation(p, variation);
+        //~ console.log(`variation changed to ${variation}`);
         //~ p5.redraw();
         //~ break;
       //~ case 'd':
-        //~ variant = math.min(lastVariant, variant + 1);
-        //~ configureVariant(variant);
-        //~ featureHue = fxHashToVariant(fxhashDecimal,
-          //~ me(p.maxHue) - me(p.minHue)) + me(p.minHue);
-        //~ scope.h = featureHue;
-        //~ featureSaturation = fxHashToVariant(fxhashDecimal,
-          //~ me(p.maxSat) - me(p.minSat)) + me(p.minSat);
-        //~ scope.s = featureSaturation;
-        //~ featureLuminance = fxHashToVariant(fxhashDecimal,
-          //~ me(p.maxLum) - me(p.minLum)) + me(p.minLum);
-        //~ scope.l = featureLuminance;
-        //~ console.log(`variant changed to ${variant}`);
+        //~ variation = math.min(lastVariation, variation + 1);
+        //~ configureVariation(p, variation);
+        //~ console.log(`variation changed to ${variation}`);
         //~ p5.redraw();
         //~ break;
       case 'z':
@@ -285,7 +309,7 @@ resizeFunction: ${resizeFunction.name}
   }
   function setupFunction1() {
     reRatio = reWidth / reHeight;
-    ratioFunction();
+    functionMap["ratio"][p["ratioFunction"]]();
     reSize = p5.min(reReWidth, reReHeight);
     scope.z = reSize;
     canvas = p5.createCanvas(me(p.size), me(p.size));
@@ -332,7 +356,7 @@ resizeFunction: ${resizeFunction.name}
     }
   }
   function windowResize1() {
-    ratioFunction();
+    functionMap["ratio"][p["ratioFunction"]]();
     reSize = p5.min(reReWidth, reReHeight);
     p5.resizeCanvas(reSize, reSize);
   }
@@ -350,31 +374,33 @@ resizeFunction: ${resizeFunction.name}
     reSize = p5.min(reReWidth, reReHeight);
     scope.z = reSize;
     p5.translate(me(p.transOffsetX), me(p.transOffsetY));
-    p5.background(me(p.bgHue), me(p.bgSat),
-      me(p.bgLum));
+    p5.background(me(p.bgHue), me(p.bgSat), me(p.bgLum));
     for (let i = 0; i < me(p.maxIter); i++) {
       p5.translate(me(p.transIterX), me(p.transIterY));
       let iFib = getFibonacci(i);
       for (let j = 0; j <= me(p.maxSpir); j++) {
+        console.log({"i": i, "j": j});
         let jFib = getFibonacci(j);
         scope.a = i;
         scope.b = j;
         scope.c = iFib;
         scope.d = jFib;
-        await drawInnerFunction();
+        await functionMap["drawInner"][p["drawInnerFunction"]]();
       }
       p5.rotate(me(p.rotate));
     }
   }
+  /**
+   * Uses alternative ratio function
+   */
   async function drawFunction2() {
     p5.noFill();
-    ratioFunction();
+    functionMap["ratio"][p["ratioFunction"]]();
     p5.scale(scale);
     size = p5.min(width, height);
     scope.z = size;
     p5.translate(me(p.transOffsetX), me(p.transOffsetY));
-    p5.background(me(p.bgHue), me(p.bgSat),
-      me(p.bgLum));
+    p5.background(me(p.bgHue), me(p.bgSat), me(p.bgLum));
     for (let i = 0; i < me(p.maxIter); i++) {
       p5.translate(me(p.transIterX), me(p.transIterY));
       let iFib = getFibonacci(i);
@@ -384,47 +410,117 @@ resizeFunction: ${resizeFunction.name}
         scope.b = j;
         scope.c = iFib;
         scope.d = jFib;
-        await drawInnerFunction();
+        await functionMap["drawInner"][p["drawInnerFunction"]]();
       }
       p5.rotate(me(p.rotate));
     }
   }
+  /**
+   * Uses fxhash to get arc(x)
+   */
   async function drawFunction3() {
     p5.noFill();
-    ratioFunction();
+    functionMap["ratio"][p["ratioFunction"]]();
     p5.scale(scale);
     size = p5.min(width, height);
     scope.z = size;
     p5.translate(me(p.transOffsetX), me(p.transOffsetY));
-    p5.background(me(p.bgHue), me(p.bgSat),
-      me(p.bgLum));
+    p5.background(me(p.bgHue), me(p.bgSat), me(p.bgLum));
+    for (let i = 0; i < fxhashTrunc.length; i++) {
+      let fi = properAlphabet.indexOf(fxhashTrunc[i]);
+      let iFib = getFibonacci(fi);
+      p5.translate(me(p.transIterX), me(p.transIterY));
+      scope.af = i;
+      scope.a = fi;
+      scope.c = iFib;
+      for (let j = 0; j <= me(p.maxSpir); j++) {
+        let jFib = getFibonacci(j);
+        scope.b = j;
+        scope.d = jFib;
+        await functionMap["drawInner"][p["drawInnerFunction"]]();
+      }
+      p5.rotate(me(p.rotate));
+    }
+  }
+  /**
+   * Uses fxhash to get arc(x) and rotates with fxHashDecimal at start
+   */
+  async function drawFunction4() {
+    p5.noFill();
+    functionMap["ratio"][p["ratioFunction"]]();
+    p5.scale(scale);
+    size = p5.min(width, height);
+    scope.z = size;
+    p5.translate(me(p.transOffsetX), me(p.transOffsetY));
+    p5.background(me(p.bgHue), me(p.bgSat), me(p.bgLum));
+    p5.rotate(me(p.rotateStart));
+    for (let i = 0; i < fxhashTrunc.length; i++) {
+      let fi = properAlphabet.indexOf(fxhashTrunc[i]);
+      let iFib = getFibonacci(fi);
+      p5.translate(me(p.transIterX), me(p.transIterY));
+      scope.af = i;
+      scope.a = fi;
+      scope.c = iFib;
+      for (let j = 0; j <= me(p.maxSpir); j++) {
+        let jFib = getFibonacci(j);
+        scope.b = j;
+        scope.d = jFib;
+        await functionMap["drawInner"][p["drawInnerFunction"]]();
+      }
+      p5.rotate(me(p.rotate));
+    }
+  }
+  /**
+   * Rotates with fxHashDecimal at start
+   */
+  async function drawFunction5() {
+    p5.noFill();
+    p5.scale(reScale);
+    reSize = p5.min(reReWidth, reReHeight);
+    scope.z = reSize;
+    p5.translate(me(p.transOffsetX), me(p.transOffsetY));
+    p5.background(me(p.bgHue), me(p.bgSat), me(p.bgLum));
+    p5.rotate(me(p.rotateStart));
     for (let i = 0; i < me(p.maxIter); i++) {
       p5.translate(me(p.transIterX), me(p.transIterY));
       let iFib = getFibonacci(i);
       for (let j = 0; j <= me(p.maxSpir); j++) {
+        //~ console.log({"i": i, "j": j});
         let jFib = getFibonacci(j);
         scope.a = i;
         scope.b = j;
         scope.c = iFib;
         scope.d = jFib;
-        await drawInnerFunction();
+        await functionMap["drawInner"][p["drawInnerFunction"]]();
       }
       p5.rotate(me(p.rotate));
     }
   }
+  /* Hue goes from 0 to 360
+   * Saturation goes from 100 to 0
+   * Luminance is featureLuminance
+   */
   async function drawInnerFunction1() {
-    scope.h = scope.b;
-    scope.s = math.abs(100 - scope.a * (100 / me(p.maxIter)));
+    scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
+    scope.s = math.abs(100 - math.floor(scope.a * (100 / me(p.maxIter))));
     await drawSpiral();
   }
+  /* Hue goes from 0 to 360
+   * Saturation goes from 0 to 100
+   * Luminance is featureLuminance
+   */
   async function drawInnerFunction2() {
-    scope.h = scope.b;
-    scope.s = scope.a;
+    scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
+    scope.s = math.floor(scope.a * (100 / me(p.maxIter)));
     await drawSpiral();
   }
+  /* Hue goes from 360 to 0
+   * Saturation goes from 100 to 0
+   * Luminance is featureLuminance
+   */
   async function drawInnerFunction3() {
-    scope.h = math.abs(360 - scope.b * (360 / me(p.maxSpir)));
-    scope.s = math.abs(100 - scope.a * (100 / me(p.maxIter)));
+    scope.h = math.abs(360 - math.floor(scope.b * (360 / me(p.maxSpir))));
+    scope.s = math.abs(100 - math.floor(scope.a * (100 / me(p.maxIter))));
     await drawSpiral();
   }
   async function drawInnerFunction4() {
@@ -434,409 +530,58 @@ resizeFunction: ${resizeFunction.name}
     );
     await drawInnerFunction1();
   }
+  /* Hue goes from 0 to 360
+   * Saturation goes from 100 to (100 - p.maxIter)
+   * Luminance is featureLuminance
+   */
   async function drawInnerFunction5() {
-    scope.h = scope.b;
+    scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.abs(100 - scope.a);
     await drawSpiral();
   }
-  async function drawSpiral() {
+  /* Hue goes from 0 to 360
+   * Saturation goes from 100 to 0 relative to 0..57 range
+   * Luminance is featureLuminance
+   */
+  async function drawInnerFunction6() {
+    scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
+    scope.s = math.floor(scope.af * (100 / fxhashTrunc.length));
+    await drawSpiral();
+  }
+  /* Hue goes from 360 to 0
+   * Saturation goes from 100 to 0 relative to 0..57 range
+   * Luminance is featureLuminance
+   */
+  async function drawInnerFunction7() {
+    scope.h = math.abs(360 - math.floor(scope.b * (360 / me(p.maxSpir))));
+    scope.s = math.floor(scope.af * (100 / fxhashTrunc.length));
+    await drawSpiral();
+  }
+  /* Hue goes from 0 to 360
+   * Saturation goes from 0 to 100 relative to 0..57 range
+   * Luminance is featureLuminance
+   */
+  async function drawInnerFunction8() {
+    scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
+    scope.s = math.abs(100 - math.floor(scope.af * (100 / fxhashTrunc.length)));
+    await drawSpiral();
+  }
+  /**
+   * Hue goes from 0 to p.maxSpir
+   * Saturation goes from 0 to p.maxIter
+   * Luminance is featureLuminance
+   */
+  async function drawInnerFunction9() {
+    scope.h = scope.b;
+    scope.s = scope.a;
+    await drawSpiral();
+  }
+async function drawSpiral() {
     p5.strokeWeight(me(p.weight));
     p5.stroke(me(p.hue), me(p.sat), me(p.lum));
     p5.arc(me(p.x), me(p.y), me(p.w), me(p.h), me(p.start), me(p.stop));
     if (me(p.anim)) {
       await sleep(me(p.delay));
-    }
-  }
-  /**
-   * @param {int} variant: output from 
-   *      fxHashToVariant(base58toDecimal(fxhashTrunc))
-   */
-  function configureVariant(variant = featureVariant) {
-    let params = {};
-    switch (variant) {
-      case -1:
-        //~ drawFunction = drawFunction1;
-        drawFunction = drawFunction3;
-        //~ drawInnerFunction = drawInnerFunction1;
-        drawInnerFunction = drawInnerFunction1;
-        //~ ratioFunction = checkRatio1;
-        ratioFunction = checkRatio2;
-        //~ resizeFunction = windowResize1;
-        resizeFunction = windowResize2;
-        //~ setupFunction = setupFunction1;
-        setupFunction = setupFunction2;
-        params = {
-          //~ "x": "0",
-          //~ "x": "b",
-          "x": "b",
-          //~ "y": "0",
-          //~ "y": "b",
-          "y": "a * b",
-          //~ "w": "c",
-          //~ "w": "pow(c, b)",
-          "w": "a * c",
-          //~ "h": "c",
-          //~ "h": "pow(c, b)",
-          "h": "b * c",
-          //~ "h": "b",
-          //~ "start": "0",
-          //~ "start": "a",
-          "start": "c",
-          //~ "stop": "e",
-          //~ "stop": "b * f",
-          //~ "rotate": "e",
-          //~ "rotate": "f",
-          //~ "weight": "u",
-          //~ "hue": "h",
-          //~ "sat": "s",
-          //~ "lum": "l",
-          //~ "transOffsetX": "z / 2",
-          //~ "transOffsetX": "z / 4",
-          //~ "transOffsetY": "z / 2",
-          //~ "transOffsetY": "z / 4",
-          //~ "transIterX": "a",
-          //~ "transIterX": "a",
-          //~ "transIterY": "a",
-          //~ "transIterY": "a",
-          //~ "transSpirX": "b",
-          //~ "transSpirX": "0",
-          //~ "transSpirY": "b",
-          //~ "transSpirY": "0",
-          //~ "bgHue": "h",
-          //~ "bgSat": "s",
-          //~ "bgLum": "l",
-          //~ "delay": "r",
-          //~ "maxHue": "hx",
-          //~ "maxHue": "210",
-          //~ "minHue": "hn",
-          //~ "minHue": "90",
-          //~ "maxSat": "sx",
-          //~ "maxSat": "75",
-          //~ "minSat": "sn",
-          //~ "minSat": "60",
-          //~ "maxLum": "lx",
-          //~ "maxLum": "60",
-          //~ "minLum": "ln",
-          //~ "minLum": "60",
-          //~ "maxIter": "i",
-          //~ "maxIter": "300",
-          //~ "maxSpir": "j",
-          //~ "maxSpir": "720",
-          //~ "anim": "n",
-          //~ "anim": "0",
-          //~ "size": "z",
-        };
-        break;
-      case 0:
-        // https://www.fxhash.xyz/generative/24631
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction1;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "b",
-          "y": "a * b",
-          "w": "a * c",
-          "h": "b * c",
-          "start": "c"
-        };
-        break;
-      case 1:
-        // https://www.fxhash.xyz/generative/24810
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction1;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "b",
-          "y": "a * b",
-          "w": "a * c",
-          "h": "b * c",
-          "start": "b"
-        };
-        break;
-      case 2:
-        // https://www.fxhash.xyz/generative/24849
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction1;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "b",
-          "y": "pow(c, a)",
-          "w": "b",
-          "h": "b * c",
-          "start": "b"
-        };
-        break;
-      case 3:
-        // https://www.fxhash.xyz/generative/24912
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction1;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "a + c",
-          "y": "a * c",
-          "w": "b + c",
-          "h": "b * c",
-          "start": "c"
-        };
-        break;
-      case 4:
-        // https://www.fxhash.xyz/generative/24979
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction1;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "c + (a * b)",
-          "y": "c + pow(a, b)",
-          "w": "a * c",
-          "h": "b * c",
-          "start": "b"
-        };
-        break;
-      case 5:
-        // https://www.fxhash.xyz/generative/25018
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction2;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "b",
-          "y": "c * a",
-          "w": "a",
-          "h": "b * c",
-          "start": "b",
-          "minLum": "30",
-          "maxLum": "45",
-          "weight": "a / 100"
-        };
-        break;
-      case 6:
-        // https://www.fxhash.xyz/generative/25309
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction1;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "a * b",
-          "y": "b * c",
-          "w": "pow(b, a)",
-          "h": "pow(c, b)",
-          "start": "b * c"
-        };
-        break;
-      case 7:
-        // https://www.fxhash.xyz/generative/25381
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction4;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "b",
-          "y": "a * b",
-          "w": "a * c",
-          "h": "b * c",
-          "start": "b"
-        };
-        break;
-      case 8:
-        /*
-         * This one is messed up, not suitable for fx(hash) and has been 
-         * removed, the one person who minted has been refunded since. See 
-         * README.md for further details.
-         * https://www.fxhash.xyz/generative/25561
-         */
-        drawInnerFunction = drawInnerFunction3;
-        params = {
-          "x": "a + b",
-          "y": "b + c",
-          "w": "a * b",
-          "h": "b * c",
-          "start": "c",
-          "rotate": "f"
-        };
-        break;
-      case 9:
-        // https://www.fxhash.xyz/generative/25935
-        params = {
-          "x": "b",
-          "y": "a * b",
-          "w": "d",
-          "h": "d",
-          "start": "c",
-          "stop": "b * f",
-          "maxHue": "180"
-        };
-        break;
-      case 10:
-        //  https://www.fxhash.xyz/generative/26105
-        drawInnerFunction = drawInnerFunction2;
-        params = {
-          "x": "a",
-          "y": "b",
-          "w": "a",
-          "h": "a",
-          "start": "c",
-          "stop": "g / a",
-          "maxHue": "300",
-          "minHue": "180",
-          "maxSat": "90",
-          "minSat": "60",
-          "minLum": "45",
-          "maxIter": "180"
-        };
-        break;
-      case 11:
-        // https://www.fxhash.xyz/generative/26432
-        params = {
-          "x": "a",
-          "y": "b",
-          "w": "c",
-          "h": "c",
-          "start": "b",
-          "stop": "g / b"
-        };
-        break;
-      case 12:
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction2;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "a * 2",
-          "y": "a * 3",
-          "w": "a * 3",
-          "h": "b",
-          "start": "c",
-          "stop": "b * f"
-        };
-        break;
-      case 13:
-        // This one is my personal favorite
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction2;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "a",
-          "y": "a",
-          "w": "b",
-          "h": "c",
-          "start": "c",
-          "stop": "b * f"
-        };
-        break;
-      case 14:
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction2;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "b",
-          "y": "a * b",
-          "w": "b",
-          "h": "d",
-          "start": "b",
-          "stop": "b * f"
-        };
-        break;
-      case 15:
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction1;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "b",
-          "y": "a * c",
-          "w": "c",
-          "h": "b * c",
-          "start": "b",
-          "stop": "f",
-          "rotate": "f"
-        };
-        break;
-      case 16:
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction5;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "b",
-          "y": "b",
-          "w": "d",
-          "h": "b * c",
-          "start": "c",
-          "stop": "f",
-          "rotate": "f",
-          "maxIter": "12",
-          "maxHue": "180",
-          "minHue": "90",
-          "maxSat": "75",
-          "minSat": "60",
-          "maxLum": "51",
-          "minLum": "36"
-        };
-        break;
-      case 17:
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction3;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "b",
-          "y": "b",
-          "w": "pow(d, a)",
-          "h": "pow(d, a)",
-          "start": "a",
-          "stop": "f",
-          "rotate": "d",
-          "maxHue": "210",
-          "maxSat": "75",
-          "minSat": "60",
-          "maxLum": "60",
-          "minLum": "45"
-        };
-        break;
-      case 18:
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction2;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
-        params = {
-          "x": "b",
-          "y": "b",
-          "w": "b",
-          "h": "c",
-          "start": "c",
-          "stop": "b * f",
-          "rotate": "b",
-          "maxSat": "75",
-          "minSat": "60"
-        };
-        break;
-      default:
-        console.log("Variant " + variant + " out of bonds");
-    }
-    for (let k in params) {
-      p[k] = params[k];
     }
   }
 }
@@ -845,6 +590,25 @@ let myp5 = new p5(sketch, window.document.body);
 
 function me(expression) {
   return math.evaluate(expression, scope);
+}
+
+function getRandFxHash() {
+  return math.max(
+    3,
+    math.floor(
+      math.abs(
+        (
+          properAlphabet.length - properAlphabet.indexOf(
+            fxhashTrunc[
+              math.floor(
+                ($fx.rand() * fxhashTrunc.length)
+              )
+            ]
+          )
+        ) * (100 / properAlphabet.length)
+      )
+    )
+  );
 }
 
 /**
@@ -879,22 +643,22 @@ function base58toDecimal(hash = fxhashTrunc) {
 
 /**
  * @param {float} decimalHash: output from base58toDecimal(fxhash)
- * @param {int} maxVariants: the inclusive n from the desired range 
+ * @param {int} maxVariations: the inclusive n from the desired range 
  *      of (0, n) for the return value
  * @param {boolean} inverse: transforms range into (n, 0)
  * @returns {int} one random integer defined by fxhash and a threshold
- *      defined by maxVariants * variantFactor
+ *      defined by maxVariations * variationFactor
  */
-function fxHashToVariant(decimalHash, maxVariants, inverse = false) {
-  let variant = math.round(decimalHash * maxVariants * variantFactor);
+function fxHashToVariation(decimalHash, maxVariations, inverse = false) {
+  let variation = math.round(decimalHash * maxVariations * variationFactor);
   if (inverse) {
-    return math.abs(maxVariants - variant);
+    return math.abs(maxVariations - variation);
   }
-  return variant;
+  return variation;
 }
 
 $fx.features({
-  //~ "fx(variant)": featureVariant,
+  "fx(variation)": featureVariation,
   "fx(hue)": featureHue,
   "fx(saturation)": featureSaturation,
   "fx(luminance)": featureLuminance,
