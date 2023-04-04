@@ -652,14 +652,12 @@ resizeFunction: ${resizeFunction.name}
         break;
       case 8:
         /*
-         * This one is messed up, not suitable for fx(hash)
+         * This one is messed up, not suitable for fx(hash) and has been 
+         * removed, the one person who minted has been refunded since. See 
+         * README.md for further details.
          * https://www.fxhash.xyz/generative/25561
          */
-        drawFunction = drawFunction1;
         drawInnerFunction = drawInnerFunction3;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
         params = {
           "x": "a + b",
           "y": "b + c",
@@ -671,11 +669,6 @@ resizeFunction: ${resizeFunction.name}
         break;
       case 9:
         // https://www.fxhash.xyz/generative/25935
-        drawFunction = drawFunction1;
-        drawInnerFunction = drawInnerFunction1;
-        ratioFunction = checkRatio1;
-        resizeFunction = windowResize1;
-        setupFunction = setupFunction1;
         params = {
           "x": "b",
           "y": "a * b",
@@ -705,11 +698,7 @@ resizeFunction: ${resizeFunction.name}
         };
         break;
       case 11:
-        //~ drawFunction = drawFunction1;
-        //~ drawInnerFunction = drawInnerFunction1;
-        //~ ratioFunction = checkRatio1;
-        //~ resizeFunction = windowResize1;
-        //~ setupFunction = setupFunction1;
+        // https://www.fxhash.xyz/generative/26432
         params = {
           "x": "a",
           "y": "b",
