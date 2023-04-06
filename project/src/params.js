@@ -5,7 +5,7 @@
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
  * @description This is Fibonacci Rainbow Spirals made with p5js for 
  *      fxhash.xyz genarative tokens. Source code available at Github: 
- *      https://github.com/iuriguilherme/fxhash1  
+ *      https://github.com/iuriguilherme/fibonacci-rainbow-spirals  
  * 
  * This program is free software: you can redistribute it and/or modify it 
  * under the terms of the GNU Affero General Public License as published by the 
@@ -211,14 +211,10 @@ export function configureVariation(p, variation) {
         "h": "b * c",
         "start": "c",
         "rotate": "f",
-        "drawFunction": "1",
         "drawInnerFunction": "3",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
-    case 9:
+    case -11:
       // https://www.fxhash.xyz/generative/25935
       params = {
         "x": "b",
@@ -228,14 +224,9 @@ export function configureVariation(p, variation) {
         "start": "c",
         "stop": "b * f",
         "maxHue": "180",
-        "drawFunction": "1",
-        "drawInnerFunction": "1",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
-    case 10:
+    case -12:
       //  https://www.fxhash.xyz/generative/26105
       params = {
         "x": "a",
@@ -250,14 +241,10 @@ export function configureVariation(p, variation) {
         "minSat": "60",
         "minLum": "45",
         "maxIter": "180",
-        "drawFunction": "1",
         "drawInnerFunction": "2",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
-    case 11:
+    case -13:
       // https://www.fxhash.xyz/generative/26432
       params = {
         "x": "a",
@@ -266,14 +253,9 @@ export function configureVariation(p, variation) {
         "h": "c",
         "start": "b",
         "stop": "g / b",
-        "drawFunction": "1",
-        "drawInnerFunction": "1",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
-    case 12:
+    case -14:
       params = {
         "x": "a * 2",
         "y": "a * 3",
@@ -281,14 +263,10 @@ export function configureVariation(p, variation) {
         "h": "b",
         "start": "c",
         "stop": "b * f",
-        "drawFunction": "1",
         "drawInnerFunction": "2",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
-    case 13:
+    case -15:
       // This one is my personal favorite
       params = {
         "x": "a",
@@ -297,14 +275,10 @@ export function configureVariation(p, variation) {
         "h": "c",
         "start": "c",
         "stop": "b * f",
-        "drawFunction": "1",
         "drawInnerFunction": "2",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
-    case 14:
+    case -16:
       params = {
         "x": "b",
         "y": "a * b",
@@ -312,14 +286,10 @@ export function configureVariation(p, variation) {
         "h": "d",
         "start": "b",
         "stop": "b * f",
-        "drawFunction": "1",
         "drawInnerFunction": "2",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
-    case 15:
+    case -17:
       params = {
         "x": "b",
         "y": "a * c",
@@ -328,14 +298,9 @@ export function configureVariation(p, variation) {
         "start": "b",
         "stop": "f",
         "rotate": "f",
-        "drawFunction": "1",
-        "drawInnerFunction": "1",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
-    case 16:
+    case -18:
       params = {
         "x": "b",
         "y": "b",
@@ -351,14 +316,10 @@ export function configureVariation(p, variation) {
         "minSat": "60",
         "maxLum": "51",
         "minLum": "36",
-        "drawFunction": "1",
         "drawInnerFunction": "5",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
-    case 17:
+    case -19:
       params = {
         "x": "b",
         "y": "b",
@@ -372,14 +333,10 @@ export function configureVariation(p, variation) {
         "minSat": "60",
         "maxLum": "60",
         "minLum": "45",
-        "drawFunction": "1",
         "drawInnerFunction": "3",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
-    case 18:
+    case -20:
       params = {
         "x": "b",
         "y": "b",
@@ -390,11 +347,7 @@ export function configureVariation(p, variation) {
         "rotate": "b",
         "maxSat": "75",
         "minSat": "60",
-        "drawFunction": "1",
         "drawInnerFunction": "2",
-        "ratioFunction": "1",
-        "resizeFunction": "1",
-        "setupFunction": "1",
       };
       break;
     case 1:
@@ -465,8 +418,8 @@ export function configureVariation(p, variation) {
         "maxLum": "45",
         "weight": "a / 100",
         "maxIter": "54",
-        "drawFunction": "5",
-        "drawInnerFunction": "2",
+        "drawFunction": "8",
+        "drawInnerFunction": "6",
       };
       break;
     case 7:
@@ -491,6 +444,588 @@ export function configureVariation(p, variation) {
         "maxIter": "22",
         "drawFunction": "5",
         "drawInnerFunction": "4",
+      };
+      break;
+    case 9:
+      params = {
+        "x": "a + b",
+        "y": "b + c",
+        "w": "a * b",
+        "h": "b * c",
+        "start": "c",
+        "rotate": "f",
+        "maxIter": "max(2, min(33, floor(ft / randomInt(2, 5))))",
+        "drawFunction": "5",
+        "drawInnerFunction": "3",
+      };
+      break;
+    case 10:
+      params = {
+        "x": "b",
+        "y": "a * b",
+        "w": "d",
+        "h": "d",
+        "start": "c",
+        "stop": "b * f",
+        "maxHue": "180",
+        "drawFunction": "11",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 11:
+      params = {
+        "x": "a",
+        "y": "b",
+        "w": "a",
+        "h": "a",
+        "start": "c",
+        "stop": "g / a",
+        "maxHue": "300",
+        "minHue": "180",
+        "maxSat": "90",
+        "minSat": "60",
+        "minLum": "45",
+        "maxIter": "180",
+        "drawFunction": "7",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 12:
+      params = {
+        "x": "a",
+        "y": "b",
+        "w": "c",
+        "h": "c",
+        "start": "b",
+        "stop": "g / b",
+        "maxIter": "33",
+        "drawFunction": "5",
+      };
+      break;
+    case 13:
+      params = {
+        "x": "a * 2",
+        "y": "a * 3",
+        "w": "a * 3",
+        "h": "b",
+        "start": "c",
+        "stop": "b * f",
+        "drawFunction": "7",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 14:
+      // This one is my personal favorite
+      params = {
+        "x": "a",
+        "y": "a",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "drawFunction": "6",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 15:
+      params = {
+        "x": "b",
+        "y": "a * b",
+        "w": "b",
+        "h": "d",
+        "start": "b",
+        "stop": "b * f",
+        "drawFunction": "7",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 16:
+      params = {
+        "x": "b",
+        "y": "a * c",
+        "w": "c",
+        "h": "b * c",
+        "start": "b",
+        "stop": "f",
+        "rotate": "f",
+        "maxIter": "24",
+        "drawFunction": "5",
+      };
+      break;
+    case 17:
+      params = {
+        "x": "b",
+        "y": "b",
+        "w": "d",
+        "h": "b * c",
+        "start": "c",
+        "stop": "f",
+        "rotate": "f",
+        "maxIter": "12",
+        "maxHue": "180",
+        "minHue": "90",
+        "maxSat": "75",
+        "minSat": "60",
+        "maxLum": "51",
+        "minLum": "36",
+        "drawFunction": "5",
+        "drawInnerFunction": "5",
+      };
+      break;
+    case 18:
+      // This is the lamest one
+      params = {
+        "x": "b",
+        "y": "b",
+        "w": "pow(d, a)",
+        "h": "pow(d, a)",
+        "start": "a",
+        "stop": "f",
+        "rotate": "d",
+        "maxHue": "210",
+        "maxSat": "75",
+        "minSat": "60",
+        "maxLum": "60",
+        "minLum": "45",
+        "maxIter": "4",
+        "drawFunction": "5",
+        "drawInnerFunction": "3",
+      };
+      break;
+    case 19:
+      params = {
+        "x": "b",
+        "y": "b",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "rotate": "b",
+        "maxSat": "75",
+        "minSat": "60",
+        "drawFunction": "7",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 20:
+      // var1-1
+      params = {
+        "x": "b",
+        "y": "a * b",
+        "w": "a * c",
+        "h": "b * c",
+        "start": "c",
+        "drawFunction": "6",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 21:
+      // var1-2
+      params = {
+        "x": "b",
+        "y": "a * b",
+        "w": "a * c",
+        "h": "b * c",
+        "start": "c",
+        "drawFunction": "6",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 22:
+      // var1-3
+      params = {
+        "x": "b",
+        "y": "a * b",
+        "w": "a * c",
+        "h": "b * c",
+        "start": "c",
+        "drawFunction": "6",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 23:
+      // var2-1
+      params = {
+        "x": "b",
+        "y": "a * b",
+        "w": "a * c",
+        "h": "b * c",
+        "start": "b",
+        "drawFunction": "6",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 24:
+      // var2-2
+      params = {
+        "x": "b",
+        "y": "a * b",
+        "w": "a * c",
+        "h": "b * c",
+        "start": "b",
+        "drawFunction": "10",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 25:
+      // var2-3
+      params = {
+        "x": "b",
+        "y": "a * b",
+        "w": "a * c",
+        "h": "b * c",
+        "start": "b",
+        "drawFunction": "11",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 26:
+      // var3-1
+      params = {
+        "x": "b",
+        "y": "pow(c, a)",
+        "w": "b",
+        "h": "b * c",
+        "start": "b",
+        "maxIter": "11",
+        "drawFunction": "6",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 27:
+      // var3-2
+      params = {
+        "x": "b",
+        "y": "pow(c, a)",
+        "w": "b",
+        "h": "b * c",
+        "start": "b",
+        "drawFunction": "10",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 28:
+      // var3-3
+      params = {
+        "x": "b",
+        "y": "pow(c, a)",
+        "w": "b",
+        "h": "b * c",
+        "start": "b",
+        "drawFunction": "11",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 29:
+      // var4-1
+      params = {
+        "x": "a + c",
+        "y": "a * c",
+        "w": "b + c",
+        "h": "b * c",
+        "start": "c",
+        "drawFunction": "6",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 30:
+      // var4-2
+      params = {
+        "x": "a + c",
+        "y": "a * c",
+        "w": "b + c",
+        "h": "b * c",
+        "start": "c",
+        "drawFunction": "10",
+        "drawInnerFunction": "5",
+      };
+      break;
+    case 31:
+      // var4-3
+      params = {
+        "x": "a + c",
+        "y": "a * c",
+        "w": "b + c",
+        "h": "b * c",
+        "start": "c",
+        "drawFunction": "11",
+        "drawInnerFunction": "5",
+      };
+      break;
+    case 32:
+      // var8-1
+      params = {
+        "x": "b",
+        "y": "a * b",
+        "w": "a * c",
+        "h": "b * c",
+        "start": "b",
+        "drawFunction": "11",
+        "drawInnerFunction": "10",
+      };
+      break;
+    case 33:
+      // var11-1
+      params = {
+        "x": "a",
+        "y": "b",
+        "w": "a",
+        "h": "a",
+        "start": "c",
+        "stop": "g / a",
+        "maxHue": "300",
+        "minHue": "180",
+        "maxSat": "90",
+        "minSat": "60",
+        "minLum": "45",
+        "maxIter": "180",
+        "drawFunction": "8",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 34:
+      // var11-2
+      params = {
+        "x": "a",
+        "y": "b",
+        "w": "a",
+        "h": "a",
+        "start": "c",
+        "stop": "g / a",
+        "maxHue": "300",
+        "minHue": "180",
+        "maxSat": "90",
+        "minSat": "60",
+        "minLum": "45",
+        "maxIter": "180",
+        "drawFunction": "9",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 35:
+      // var12-1
+      params = {
+        "x": "a",
+        "y": "b",
+        "w": "c",
+        "h": "c",
+        "start": "b",
+        "stop": "g / b",
+        "drawFunction": "6",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 36:
+      // var12-2
+      params = {
+        "x": "a",
+        "y": "b",
+        "w": "c",
+        "h": "c",
+        "start": "b",
+        "stop": "g / b",
+        "drawFunction": "10",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 37:
+      // var12-3
+      params = {
+        "x": "a",
+        "y": "b",
+        "w": "c",
+        "h": "c",
+        "start": "b",
+        "stop": "g / b",
+        "maxHue": "300",
+        "maxSat": "90",
+        "drawFunction": "11",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 38:
+      // var13-1
+      params = {
+        "x": "a * 2",
+        "y": "a * 3",
+        "w": "a * 3",
+        "h": "b",
+        "start": "c",
+        "stop": "b * f",
+        "drawFunction": "8",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 39:
+      // var13-2
+      params = {
+        "x": "a * 2",
+        "y": "a * 3",
+        "w": "a * 3",
+        "h": "b",
+        "start": "c",
+        "stop": "b * f",
+        "drawFunction": "9",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 40:
+      // var14-1
+      params = {
+        "x": "a",
+        "y": "a",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "drawFunction": "10",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 41:
+      // var14-2
+      params = {
+        "x": "a",
+        "y": "a",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "drawFunction": "11",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 42:
+      // var14-3
+      params = {
+        "x": "a",
+        "y": "a",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "drawFunction": "8",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 43:
+      // var14-4
+      params = {
+        "x": "a",
+        "y": "a",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "drawFunction": "9",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 44:
+      // var15-1
+      params = {
+        "x": "b",
+        "y": "a * b",
+        "w": "b",
+        "h": "d",
+        "start": "b",
+        "stop": "b * f",
+        "drawFunction": "9",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 45:
+      // var16-1
+      params = {
+        "x": "b",
+        "y": "a * c",
+        "w": "c",
+        "h": "b * c",
+        "start": "b",
+        "stop": "f",
+        "rotate": "f",
+        "drawFunction": "11",
+        "drawInnerFunction": "8",
+      };
+      break;
+    case 46:
+      // var19-1
+      params = {
+        "x": "b",
+        "y": "b",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "rotate": "b",
+        "maxSat": "75",
+        "minSat": "60",
+        "drawFunction": "8",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 47:
+      // var19-2
+      params = {
+        "x": "b",
+        "y": "b",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "rotate": "b",
+        "maxSat": "75",
+        "minSat": "60",
+        "drawFunction": "9",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 48:
+      // var19-3
+      params = {
+        "x": "b",
+        "y": "b",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "rotate": "b",
+        "maxSat": "75",
+        "minSat": "60",
+        "drawFunction": "6",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 49:
+      // var19-4
+      params = {
+        "x": "b",
+        "y": "b",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "rotate": "b",
+        "maxSat": "75",
+        "minSat": "60",
+        "drawFunction": "10",
+        "drawInnerFunction": "6",
+      };
+      break;
+    case 50:
+      // var19-5
+      params = {
+        "x": "b",
+        "y": "b",
+        "w": "b",
+        "h": "c",
+        "start": "c",
+        "stop": "b * f",
+        "rotate": "b",
+        "maxSat": "75",
+        "minSat": "60",
+        "drawFunction": "11",
+        "drawInnerFunction": "6",
       };
       break;
     default:
