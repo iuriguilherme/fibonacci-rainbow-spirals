@@ -24,7 +24,7 @@
  */
 
 const name = "fibonacci-rainbow-spirals";
-const version = "4.1.1";
+const version = "4.1.2";
 
 const seed = fxrand() * 1e8;
 
@@ -46,9 +46,9 @@ const phi = math.phi;
 const sqrt5 = math.sqrt(5);
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
 const lastVariation = 50;
-//~ const featureVariation = fxHashToVariation(fxhashDecimal, lastVariation, 1);
+const featureVariation = fxHashToVariation(fxhashDecimal, lastVariation, 1);
 //~ const featureVariation = 0;
-const featureVariation = 13;
+//~ const featureVariation = 13;
 const BUFF_SIZE = 1080;
 const BUFF_WID_MOD = 1;
 const BUFF_HEI_MOD = 1;
@@ -90,9 +90,12 @@ let scope = {
 let variation = featureVariation;
 let width = window.innerWidth;
 let height = window.innerHeight;
+let dS = 1000;
 let 
   buffer,
   canvas,
+  dM,
+  dW,
   //~ drawFunction,
   //~ drawInnerFunction,
   featureHue,
@@ -134,6 +137,7 @@ let sketch = function(p5) {
       "9": drawFunction9,
       "10": drawFunction10,
       "11": drawFunction11,
+      "12": drawFunction12,
     },
     "drawInner": {
       "1": drawInnerFunction1,
@@ -147,6 +151,7 @@ let sketch = function(p5) {
       "9": drawInnerFunction9,
       "10": drawInnerFunction10,
       "11": drawInnerFunction11,
+      "12": drawInnerFunction12,
     },
     "ratio": {
       "1": checkRatio1,
@@ -155,10 +160,12 @@ let sketch = function(p5) {
     "resize": {
       "1": windowResize1,
       "2": windowResize2,
+      "3": windowResize3,
     },
     "setup": {
       "1": setupFunction1,
       "2": setupFunction2,
+      "3": setupFunction3,
     },
   }
   p = {
@@ -345,8 +352,13 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
     sizeY = size * BUFF_HEI_MOD;
     canvas = p5.createCanvas(sizeX, sizeY);
     scale = p5.width / width;
-    p5.scale(reScale);
+    p5.scale(scale);
     p5.pixelDensity(CANVAS_PIXEL_DENSITY);
+  }
+  function setupFunction3() {
+    dW = p5.min(p5.windowWidth, p5.windowHeight);
+    dM = dW / dS;
+    canvas = p5.createCanvas(dW, dW);
   }
   /**
    * @description Resize screen helper function
@@ -390,6 +402,11 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
     p5.scaleFactor = BUFF_SIZE / size;
     p5.resizeCanvas(sizeX, sizeY);
     //~ p5.image(buffer, 0, 0, sizeX, sizeY);
+  }
+  function windowResize3() {
+    dW = p5.min(p5.windowWidth, p5.windowHeight);
+    dM = dW / dS;
+    p5.resizeCanvas(dW, dW);
   }
   async function drawFunction1() {
     p5.noFill();
@@ -686,6 +703,36 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
     }
   }
   /**
+   * Uses a PRNG to decide arc(x), and rotates by fxHashDecimal at start
+   * Uses alternative ratio function
+   */
+  async function drawFunction12() {
+    p5.noFill();
+    functionMap["ratio"][p["ratioFunction"]]();
+    p5.scale(scale);
+    size = p5.min(width, height);
+    scope.z = size;
+    p5.translate(me(p.transOffsetX), me(p.transOffsetY));
+    p5.background(me(p.bgHue), me(p.bgSat), me(p.bgLum));
+    p5.rotate(me(p.rotateStart));
+    for (let i = 0; i < me(p.maxIter); i++) {
+      scope.a = i;
+      scope.af = i;
+      let fi = getRandFxHash();
+      let iFib = getFibonacci(fi);
+      scope.c = iFib;
+      p5.translate(me(p.transIterX), me(p.transIterY));
+      for (let j = 0; j <= me(p.maxSpir); j++) {
+        //~ console.log({"i": i, "j": j});
+        scope.b = j;
+        let jFib = getFibonacci(j);
+        scope.d = jFib;
+        await functionMap["drawInner"][p["drawInnerFunction"]]();
+      }
+      p5.rotate(me(p.rotate));
+    }
+  }
+  /**
    * Hue goes from 0 to 360
    * Saturation goes from 100 to 0
    * Luminance is featureLuminance
@@ -693,7 +740,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   async function drawInnerFunction1() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.abs(100 - math.floor(scope.a * (100 / me(p.maxIter))));
-    await drawSpiral();
+    await drawSpiral1();
   }
   /**
    * Hue goes from 0 to 360
@@ -703,7 +750,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   async function drawInnerFunction2() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.floor(scope.a * (100 / me(p.maxIter)));
-    await drawSpiral();
+    await drawSpiral1();
   }
   /**
    * Hue goes from 360 to 0
@@ -713,7 +760,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   async function drawInnerFunction3() {
     scope.h = math.abs(360 - math.floor(scope.b * (360 / me(p.maxSpir))));
     scope.s = math.abs(100 - math.floor(scope.a * (100 / me(p.maxIter))));
-    await drawSpiral();
+    await drawSpiral1();
   }
   async function drawInnerFunction4() {
     p5.translate(
@@ -730,7 +777,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   async function drawInnerFunction5() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.abs(100 - scope.a);
-    await drawSpiral();
+    await drawSpiral1();
   }
   /**
    * Hue goes from 0 to 360
@@ -740,7 +787,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   async function drawInnerFunction6() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.floor(scope.af * (100 / fxhashTrunc.length));
-    await drawSpiral();
+    await drawSpiral1();
   }
   /**
    * Hue goes from 360 to 0
@@ -750,7 +797,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   async function drawInnerFunction7() {
     scope.h = math.abs(360 - math.floor(scope.b * (360 / me(p.maxSpir))));
     scope.s = math.floor(scope.af * (100 / fxhashTrunc.length));
-    await drawSpiral();
+    await drawSpiral1();
   }
   /**
    * Hue goes from 0 to 360
@@ -760,7 +807,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   async function drawInnerFunction8() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.abs(100 - math.floor(scope.af * (100 / fxhashTrunc.length)));
-    await drawSpiral();
+    await drawSpiral1();
   }
   /**
    * Hue goes from 0 to p.maxSpir
@@ -770,7 +817,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   async function drawInnerFunction9() {
     scope.h = scope.b;
     scope.s = scope.a;
-    await drawSpiral();
+    await drawSpiral1();
   }
   async function drawInnerFunction10() {
     p5.translate(
@@ -787,12 +834,38 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   async function drawInnerFunction11() {
     scope.h = math.abs(360 - math.floor(scope.b * (360 / me(p.maxSpir))));
     scope.s = math.abs(100 - math.floor(scope.af * (100 / fxhashTrunc.length)));
-    await drawSpiral();
+    await drawSpiral1();
   }
-async function drawSpiral() {
+  /**
+   * Hue goes from 0 to 360
+   * Saturation goes from 100 to 0 relative to 0..57 range
+   * Luminance is featureLuminance
+   * Uses alternative ratio function
+   */
+  async function drawInnerFunction12() {
+    scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
+    scope.s = math.floor(scope.af * (100 / fxhashTrunc.length));
+    await drawSpiral2();
+  }
+  async function drawSpiral1() {
     p5.strokeWeight(me(p.weight));
     p5.stroke(me(p.hue), me(p.sat), me(p.lum));
     p5.arc(me(p.x), me(p.y), me(p.w), me(p.h), me(p.start), me(p.stop));
+    if (me(p.anim)) {
+      await sleep(me(p.delay));
+    }
+  }
+  async function drawSpiral2() {
+    p5.strokeWeight(me(p.weight));
+    p5.stroke(me(p.hue), me(p.sat), me(p.lum));
+    p5.arc(
+      me(p.x) * dM,
+      me(p.y) * dM,
+      me(p.w) * dM,
+      me(p.h) * dM,
+      me(p.start) * dM,
+      me(p.stop) * dM,
+    );
     if (me(p.anim)) {
       await sleep(me(p.delay));
     }

@@ -512,6 +512,9 @@ export function configureVariation(p, variation) {
         "stop": "b * f",
         "drawFunction": "7",
         "drawInnerFunction": "6",
+        //~ "ratioFunction": "1",
+        //~ "resizeFunction": "3",
+        //~ "setupFunction": "3",
       };
       break;
     case 14:
