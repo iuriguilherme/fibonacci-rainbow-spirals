@@ -48,6 +48,7 @@ const fxhashDecimal = base58toDecimal(fxhashTrunc);
 const lastVariation = 50;
 const featureVariation = fxHashToVariation(fxhashDecimal, lastVariation, 1);
 //~ const featureVariation = 0;
+//~ const featureVariation = 13;
 const BUFF_SIZE = 1080;
 const BUFF_WID_MOD = 1;
 const BUFF_HEI_MOD = 1;
@@ -274,16 +275,16 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   }
   p5.keyTyped = function() {
     switch (p5.key.toLowerCase()) {
-      case 'r':
-        console.log("redrawing canvas...");
-        p5.redraw();
-        break;
-      case 'f':
-        console.log("resizing window...");
-        functionMap["resize"][p["resizeFunction"]]();
-        break;
+      //~ case 'r':
+        //~ console.log("redrawing canvas...");
+        //~ p5.redraw();
+        //~ break;
+      //~ case 'f':
+        //~ console.log("resizing window...");
+        //~ functionMap["resize"][p["resizeFunction"]]();
+        //~ break;
       case 's':
-        let file = `${name}_ver${version}_var${variation}.png`;
+        let file = `${name}_v${version}_variation-${variation}.png`;
         console.log(`saving canvas to ${file}...`);
         p5.saveCanvas(canvas, file);
         break;
@@ -319,7 +320,14 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
         console.log(`animation delay increased to ${me(p.delay)}ms`);
         break;
       default:
-        console.log(`key ${p5.key} was pressed, which doesn't do anything`);
+        console.log(
+          `key ${p5.key} was pressed, which doesn't do anything.`,
+          "\nz: Decrease animation delay in 100ms (down to 0ms);",
+          "\nc: Increase animation delay in 100ms (up to 6s);",
+          "\nx: Remove animation delay (the screen will freeze until the",
+          "drawing is finished;",
+          "\ns: Saves current canvas to .png",
+        );
     }
   }
   function setupFunction1() {
