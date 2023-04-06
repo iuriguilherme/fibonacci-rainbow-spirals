@@ -46,9 +46,9 @@ const phi = math.phi;
 const sqrt5 = math.sqrt(5);
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
 const lastVariation = 50;
-const featureVariation = fxHashToVariation(fxhashDecimal, lastVariation, 1);
+//~ const featureVariation = fxHashToVariation(fxhashDecimal, lastVariation, 1);
 //~ const featureVariation = 0;
-//~ const featureVariation = 13;
+const featureVariation = 13;
 const BUFF_SIZE = 1080;
 const BUFF_WID_MOD = 1;
 const BUFF_HEI_MOD = 1;
@@ -232,7 +232,7 @@ let sketch = function(p5) {
     scope.l = featureLuminance;
     
     $fx.features({
-      "fx(variation)": featureVariation,
+      //~ "fx(variation)": featureVariation,
       //~ "fx(draw)": p.drawFunction,
       "fx(hue)": featureHue,
       "fx(saturation)": featureSaturation,
