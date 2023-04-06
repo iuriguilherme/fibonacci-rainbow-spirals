@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals  
- * @version 4.1.0  
+ * @version 4.1.1  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -24,7 +24,7 @@
  */
 
 const name = "fibonacci-rainbow-spirals";
-const version = "4.1.0";
+const version = "4.1.1";
 
 const seed = fxrand() * 1e8;
 
@@ -46,9 +46,9 @@ const phi = math.phi;
 const sqrt5 = math.sqrt(5);
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
 const lastVariation = 50;
-//~ const featureVariation = fxHashToVariation(fxhashDecimal, lastVariation, 1);
+const featureVariation = fxHashToVariation(fxhashDecimal, lastVariation, 1);
 //~ const featureVariation = 0;
-const featureVariation = 13;
+//~ const featureVariation = 13;
 const BUFF_SIZE = 1080;
 const BUFF_WID_MOD = 1;
 const BUFF_HEI_MOD = 1;
