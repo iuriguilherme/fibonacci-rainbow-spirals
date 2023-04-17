@@ -513,9 +513,6 @@ export function configureVariation(p, variation) {
         "stop": "b * f",
         "drawFunction": "7",
         "drawInnerFunction": "6",
-        //~ "ratioFunction": "1",
-        //~ "resizeFunction": "3",
-        //~ "setupFunction": "3",
       };
       break;
     case 14:
@@ -1033,6 +1030,21 @@ export function configureVariation(p, variation) {
         "minSat": "60",
         "drawFunction": "11",
         "drawInnerFunction": "6",
+      };
+      break;
+    case 51:
+      params = {
+        //~ "x": "a",
+        //~ "y": "a",
+        //~ "w": "b",
+        //~ "h": "b",
+        //~ "start": "b",
+        //~ "stop": "f",
+        //~ "rotate": "f",
+        //~ "maxIter": "24",
+        //~ "drawFunction": "5",
+        //~ "drawInnerFunction": "13",
+        "drawSpiral": "3",
       };
       break;
     default:

@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals  
- * @version 4.1.2  
+ * @version 4.2.0  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -24,7 +24,7 @@
  */
 
 const name = "fibonacci-rainbow-spirals";
-const version = "4.1.2";
+const version = "4.2.0";
 
 const seed = fxrand() * 1e8;
 
@@ -45,10 +45,11 @@ const half_pi = math.pi / 2;
 const phi = math.phi;
 const sqrt5 = math.sqrt(5);
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
-const lastVariation = 50;
+const lastVariation = 51;
 //~ const featureVariation = fxHashToVariation(fxhashDecimal, lastVariation, 1);
+const featureVariation = math.randomInt(lastVariation);
 //~ const featureVariation = 0;
-const featureVariation = 15;
+//~ const featureVariation = 51;
 const BUFF_SIZE = 1080;
 const BUFF_WID_MOD = 1;
 const BUFF_HEI_MOD = 1;
@@ -126,32 +127,37 @@ let sketch = function(p5) {
   
   functionMap = {
     "draw": {
-      "1": drawFunction1,
-      "2": drawFunction2,
-      "3": drawFunction3,
-      "4": drawFunction4,
-      "5": drawFunction5,
-      "6": drawFunction6,
-      "7": drawFunction7,
-      "8": drawFunction8,
-      "9": drawFunction9,
-      "10": drawFunction10,
-      "11": drawFunction11,
-      "12": drawFunction12,
+      "1": drawOuterFunctionDefault,
+      "2": drawOuterFunctionAltRatio,
+      "3": drawOuterFunctionFxHashX,
+      "4": drawOuterFunctionFxHashXRotate,
+      "5": drawOuterFunctionRotate,
+      "6": drawOuterFunctionPRNG,
+      "7": drawOuterFunctionPRNGRotate,
+      "8": drawOuterFunctionPRNGRotate1,
+      "9": drawOuterFunctionPRNGRotate2,
+      "10": drawOuterFunctionPRNG1,
+      "11": drawOuterFunctionPRNG2,
+      "12": drawOuterFunctionPRNGRotateAltRatio,
     },
     "drawInner": {
-      "1": drawInnerFunction1,
-      "2": drawInnerFunction2,
-      "3": drawInnerFunction3,
-      "4": drawInnerFunction4,
-      "5": drawInnerFunction5,
-      "6": drawInnerFunction6,
-      "7": drawInnerFunction7,
-      "8": drawInnerFunction8,
-      "9": drawInnerFunction9,
-      "10": drawInnerFunction10,
-      "11": drawInnerFunction11,
-      "12": drawInnerFunction12,
+      "1": drawInnerFunctionDefault,
+      "2": drawInnerFunctionIsat,
+      "3": drawInnerFunctionIhue,
+      "4": drawInnerFunctionTranslate,
+      "5": drawInnerFunctionMsat,
+      "6": drawInnerFunctionBsat,
+      "7": drawInnerFunctionIhueBsat,
+      "8": drawInnerFunctionIBsat,
+      "9": drawInnerFunctionMhueMsat,
+      "10": drawInnerFunctionTransateIBsat,
+      "11": drawInnerFunctionIHueIBSat,
+      "12": drawInnerFunctionMHueBSat,
+    },
+    "drawSpiral": {
+      "1": drawSpiralDefault,
+      "2": drawSpiralAltRatio,
+      "3": drawSpiralRandom,
     },
     "ratio": {
       "1": checkRatio1,
@@ -203,20 +209,18 @@ let sketch = function(p5) {
     "size": "z",
     "drawInnerFunction": "1",
     "drawFunction": "1",
+    "drawSpiral": "1",
     "ratioFunction": "1",
     "resizeFunction": "1",
     "setupFunction": "1",
   };
   reWidth = window.innerWidth;
   reHeight = window.innerHeight;
-  featureHue = fxHashToVariation(fxhashDecimal, me(p.maxHue) - me(p.minHue)) + 
-    me(p.minHue);
+  featureHue = math.randomInt(me(p.minHue), me(p.maxHue));
   scope.h = featureHue;
-  featureSaturation = fxHashToVariation(fxhashDecimal, me(p.maxSat) - 
-    me(p.minSat)) + me(p.minSat);
+  featureSaturation = math.randomInt(me(p.minSat), me(p.maxSat));
   scope.s = featureSaturation;
-  featureLuminance = fxHashToVariation(fxhashDecimal, me(p.maxLum) - 
-    me(p.minLum)) + me(p.minLum);
+  featureLuminance = math.randomInt(me(p.minLum), me(p.maxLum));
   scope.l = featureLuminance;
   
   p5.preload = function() {
@@ -228,22 +232,21 @@ let sketch = function(p5) {
     p5.colorMode(p5.HSL);
     
     configureVariation(p, variation);
-    featureHue = fxHashToVariation(fxhashDecimal, me(p.maxHue) - me(p.minHue)) 
-      + me(p.minHue);
+    featureHue = math.randomInt(me(p.minHue), me(p.maxHue));
     scope.h = featureHue;
-    featureSaturation = fxHashToVariation(fxhashDecimal, me(p.maxSat) - 
-      me(p.minSat)) + me(p.minSat);
+    featureSaturation = math.randomInt(me(p.minSat), me(p.maxSat));
     scope.s = featureSaturation;
-    featureLuminance = fxHashToVariation(fxhashDecimal, me(p.maxLum) - 
-      me(p.minLum)) + me(p.minLum);
+    featureLuminance = math.randomInt(me(p.minLum), me(p.maxLum));
     scope.l = featureLuminance;
     
     $fx.features({
-      //~ "fx(variation)": featureVariation,
-      //~ "fx(draw)": p.drawFunction,
-      "fx(hue)": featureHue,
-      "fx(saturation)": featureSaturation,
-      "fx(luminance)": featureLuminance,
+      "Variation": featureVariation,
+      "Luminance": featureLuminance,
+      "Background Hue": featureHue,
+      "Background Saturation": featureSaturation,
+      "Third function": functionMap["draw"][p["drawFunction"]].name,
+      "Second function": functionMap["drawInner"][p["drawInnerFunction"]].name,
+      "First function": functionMap["drawSpiral"][p["drawSpiral"]].name,
     });
     
     functionMap["setup"][p["setupFunction"]]();
@@ -269,6 +272,7 @@ fx(luminance): ${featureLuminance}
 Current variation: ${variation}
 drawFunction: ${functionMap["draw"][p["drawFunction"]].name}
 drawInnerFunction: ${functionMap["drawInner"][p["drawInnerFunction"]].name}
+drawSpiral: ${functionMap["drawSpiral"][p["drawSpiral"]].name}
 ratioFunction: ${functionMap["ratio"][p["ratioFunction"]].name}
 resizeFunction: ${functionMap["resize"][p["resizeFunction"]].name}
 setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
@@ -408,7 +412,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
     dM = dW / dS;
     p5.resizeCanvas(dW, dW);
   }
-  async function drawFunction1() {
+  async function drawOuterFunctionDefault() {
     p5.noFill();
     p5.scale(reScale);
     reSize = p5.min(reReWidth, reReHeight);
@@ -432,7 +436,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   /**
    * Uses alternative ratio function
    */
-  async function drawFunction2() {
+  async function drawOuterFunctionAltRatio() {
     p5.noFill();
     functionMap["ratio"][p["ratioFunction"]]();
     p5.scale(scale);
@@ -457,7 +461,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   /**
    * Uses fxhash to get arc(x)
    */
-  async function drawFunction3() {
+  async function drawOuterFunctionFxHashX() {
     p5.noFill();
     p5.scale(reScale);
     reSize = p5.min(reReWidth, reReHeight);
@@ -483,7 +487,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   /**
    * Uses fxhash to get arc(x) and rotates with fxHashDecimal at start
    */
-  async function drawFunction4() {
+  async function drawOuterFunctionFxHashXRotate() {
     p5.noFill();
     p5.scale(reScale);
     reSize = p5.min(reReWidth, reReHeight);
@@ -510,7 +514,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   /**
    * Rotates with fxHashDecimal at start
    */
-  async function drawFunction5() {
+  async function drawOuterFunctionRotate() {
     p5.noFill();
     p5.scale(reScale);
     reSize = p5.min(reReWidth, reReHeight);
@@ -536,7 +540,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   /**
    * Uses a PRNG to decide arc(x)
    */
-  async function drawFunction6() {
+  async function drawOuterFunctionPRNG() {
     p5.noFill();
     p5.scale(reScale);
     reSize = p5.min(reReWidth, reReHeight);
@@ -563,7 +567,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
   /**
    * Uses a PRNG to decide arc(x), and rotates by fxHashDecimal at start
    */
-  async function drawFunction7() {
+  async function drawOuterFunctionPRNGRotate() {
     p5.noFill();
     p5.scale(reScale);
     reSize = p5.min(reReWidth, reReHeight);
@@ -592,7 +596,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
    * Uses a PRNG to decide arc(x), and rotates by fxHashDecimal at start
    * Alternative version 1
    */
-  async function drawFunction8() {
+  async function drawOuterFunctionPRNGRotate1() {
     p5.noFill();
     p5.scale(reScale);
     reSize = p5.min(reReWidth, reReHeight);
@@ -621,7 +625,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
    * Uses a PRNG to decide arc(x), and rotates by fxHashDecimal at start
    * Alternative version 2
    */
-  async function drawFunction9() {
+  async function drawOuterFunctionPRNGRotate2() {
     p5.noFill();
     p5.scale(reScale);
     reSize = p5.min(reReWidth, reReHeight);
@@ -650,7 +654,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
    * Uses a PRNG to decide arc(x)
    * Alternative version 1
    */
-  async function drawFunction10() {
+  async function drawOuterFunctionPRNG1() {
     p5.noFill();
     p5.scale(reScale);
     reSize = p5.min(reReWidth, reReHeight);
@@ -678,7 +682,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
    * Uses a PRNG to decide arc(x)
    * Alternative version 2
    */
-  async function drawFunction11() {
+  async function drawOuterFunctionPRNG2() {
     p5.noFill();
     p5.scale(reScale);
     reSize = p5.min(reReWidth, reReHeight);
@@ -706,7 +710,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
    * Uses a PRNG to decide arc(x), and rotates by fxHashDecimal at start
    * Uses alternative ratio function
    */
-  async function drawFunction12() {
+  async function drawOuterFunctionPRNGRotateAltRatio() {
     p5.noFill();
     functionMap["ratio"][p["ratioFunction"]]();
     p5.scale(scale);
@@ -737,104 +741,104 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
    * Saturation goes from 100 to 0
    * Luminance is featureLuminance
    */
-  async function drawInnerFunction1() {
+  async function drawInnerFunctionDefault() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.abs(100 - math.floor(scope.a * (100 / me(p.maxIter))));
-    await drawSpiral1();
+    await functionMap["drawSpiral"][p["drawSpiral"]]();
   }
   /**
    * Hue goes from 0 to 360
    * Saturation goes from 0 to 100
    * Luminance is featureLuminance
    */
-  async function drawInnerFunction2() {
+  async function drawInnerFunctionIsat() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.floor(scope.a * (100 / me(p.maxIter)));
-    await drawSpiral1();
+    await functionMap["drawSpiral"][p["drawSpiral"]]();
   }
   /**
    * Hue goes from 360 to 0
    * Saturation goes from 100 to 0
    * Luminance is featureLuminance
    */
-  async function drawInnerFunction3() {
+  async function drawInnerFunctionIhue() {
     scope.h = math.abs(360 - math.floor(scope.b * (360 / me(p.maxSpir))));
     scope.s = math.abs(100 - math.floor(scope.a * (100 / me(p.maxIter))));
-    await drawSpiral1();
+    await functionMap["drawSpiral"][p["drawSpiral"]]();
   }
-  async function drawInnerFunction4() {
+  async function drawInnerFunctionTranslate() {
     p5.translate(
       me(p.transSpirX),
       me(p.transSpirY),
     );
-    await drawInnerFunction1();
+    await drawInnerFunctionDefault();
   }
   /**
    * Hue goes from 0 to 360
    * Saturation goes from 100 to (100 - p.maxIter)
    * Luminance is featureLuminance
    */
-  async function drawInnerFunction5() {
+  async function drawInnerFunctionMsat() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.abs(100 - scope.a);
-    await drawSpiral1();
+    await functionMap["drawSpiral"][p["drawSpiral"]]();
   }
   /**
    * Hue goes from 0 to 360
-   * Saturation goes from 100 to 0 relative to 0..57 range
+   * Saturation goes from 0 to 100 relative to 0..57 range
    * Luminance is featureLuminance
    */
-  async function drawInnerFunction6() {
+  async function drawInnerFunctionBsat() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.floor(scope.af * (100 / fxhashTrunc.length));
-    await drawSpiral1();
+    await functionMap["drawSpiral"][p["drawSpiral"]]();
   }
   /**
    * Hue goes from 360 to 0
    * Saturation goes from 0 to 100 relative to 0..57 range
    * Luminance is featureLuminance
    */
-  async function drawInnerFunction7() {
+  async function drawInnerFunctionIhueBsat() {
     scope.h = math.abs(360 - math.floor(scope.b * (360 / me(p.maxSpir))));
     scope.s = math.floor(scope.af * (100 / fxhashTrunc.length));
-    await drawSpiral1();
+    await functionMap["drawSpiral"][p["drawSpiral"]]();
   }
   /**
    * Hue goes from 0 to 360
-   * Saturation goes from 1000 to 0 relative to 0..57 range
+   * Saturation goes from 100 to 0 relative to 0..57 range
    * Luminance is featureLuminance
    */
-  async function drawInnerFunction8() {
+  async function drawInnerFunctionIBsat() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.abs(100 - math.floor(scope.af * (100 / fxhashTrunc.length)));
-    await drawSpiral1();
+    await functionMap["drawSpiral"][p["drawSpiral"]]();
   }
   /**
    * Hue goes from 0 to p.maxSpir
    * Saturation goes from 0 to p.maxIter
    * Luminance is featureLuminance
    */
-  async function drawInnerFunction9() {
+  async function drawInnerFunctionMhueMsat() {
     scope.h = scope.b;
     scope.s = scope.a;
-    await drawSpiral1();
+    await functionMap["drawSpiral"][p["drawSpiral"]]();
   }
-  async function drawInnerFunction10() {
+  async function drawInnerFunctionTransateIBsat() {
     p5.translate(
       me(p.transSpirX),
       me(p.transSpirY),
     );
-    await drawInnerFunction8();
+    await drawInnerFunctionIBsat();
   }
   /**
    * Hue goes from 360 to 0
    * Saturation goes from 100 to 0 relative to 0..57 range
    * Luminance is featureLuminance
    */
-  async function drawInnerFunction11() {
+  async function drawInnerFunctionIHueIBSat() {
     scope.h = math.abs(360 - math.floor(scope.b * (360 / me(p.maxSpir))));
     scope.s = math.abs(100 - math.floor(scope.af * (100 / fxhashTrunc.length)));
-    await drawSpiral1();
+    await functionMap["drawSpiral"][p["drawSpiral"]]();
   }
   /**
    * Hue goes from 0 to 360
@@ -842,12 +846,12 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
    * Luminance is featureLuminance
    * Uses alternative ratio function
    */
-  async function drawInnerFunction12() {
+  async function drawInnerFunctionMHueBSat() {
     scope.h = math.floor(scope.b * (360 / me(p.maxSpir)));
     scope.s = math.floor(scope.af * (100 / fxhashTrunc.length));
-    await drawSpiral2();
+    await functionMap["drawSpiral"][p["drawSpiral"]]();
   }
-  async function drawSpiral1() {
+  async function drawSpiralDefault() {
     p5.strokeWeight(me(p.weight));
     p5.stroke(me(p.hue), me(p.sat), me(p.lum));
     p5.arc(me(p.x), me(p.y), me(p.w), me(p.h), me(p.start), me(p.stop));
@@ -855,7 +859,7 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
       await sleep(me(p.delay));
     }
   }
-  async function drawSpiral2() {
+  async function drawSpiralAltRatio() {
     p5.strokeWeight(me(p.weight));
     p5.stroke(me(p.hue), me(p.sat), me(p.lum));
     p5.arc(
@@ -865,6 +869,21 @@ setupFunction: ${functionMap["setup"][p["setupFunction"]].name}
       me(p.h) * dM,
       me(p.start) * dM,
       me(p.stop) * dM,
+    );
+    if (me(p.anim)) {
+      await sleep(me(p.delay));
+    }
+  }
+  async function drawSpiralRandom() {
+    p5.strokeWeight(me(p.weight));
+    p5.stroke(me(p.hue), me(p.sat), me(p.lum));
+    p5.arc(
+      me(p.x) * $fx.rand(),
+      me(p.y) * $fx.rand(),
+      me(p.w) * $fx.rand(),
+      me(p.h) * $fx.rand(),
+      me(p.start) * $fx.rand(),
+      me(p.stop) * $fx.rand(),
     );
     if (me(p.anim)) {
       await sleep(me(p.delay));
