@@ -267,7 +267,7 @@ export function configureVariation(p, variation) {
       };
       break;
     case -15:
-      // This one is my personal favorite
+      // This one was my personal favorite
       params = {
         "x": "a",
         "y": "a",
@@ -503,6 +503,7 @@ export function configureVariation(p, variation) {
       };
       break;
     case 13:
+      // https://www.fxhash.xyz/generative/26497
       params = {
         "x": "a * 2",
         "y": "a * 3",
@@ -519,6 +520,7 @@ export function configureVariation(p, variation) {
       break;
     case 14:
       // This one is my personal favorite
+      // https://www.fxhash.xyz/generative/26599
       params = {
         "x": "a",
         "y": "a",
@@ -540,6 +542,8 @@ export function configureVariation(p, variation) {
         "stop": "b * f",
         "drawFunction": "7",
         "drawInnerFunction": "6",
+        "maxIter": "300",
+        "maxSpir": "45",
       };
       break;
     case 16:
