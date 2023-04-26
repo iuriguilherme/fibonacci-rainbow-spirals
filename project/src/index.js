@@ -1,6 +1,6 @@
 /**!
  * @file Fibonacci Rainbow Spirals  
- * @version 4.2.0  
+ * @version 4.2.1  
  * @copyright Iuri Guilherme 2023  
  * @license GNU AGPLv3  
  * @author Iuri Guilherme <https://iuri.neocities.org/>  
@@ -24,7 +24,7 @@
  */
 
 const name = "fibonacci-rainbow-spirals";
-const version = "4.2.0";
+const version = "4.2.1";
 
 const seed = fxrand() * 1e8;
 
@@ -47,9 +47,9 @@ const sqrt5 = math.sqrt(5);
 const fxhashDecimal = base58toDecimal(fxhashTrunc);
 const lastVariation = 51;
 //~ const featureVariation = fxHashToVariation(fxhashDecimal, lastVariation, 1);
-const featureVariation = math.randomInt(lastVariation);
+//~ const featureVariation = math.randomInt(lastVariation);
 //~ const featureVariation = 0;
-//~ const featureVariation = 51;
+const featureVariation = 16;
 const BUFF_SIZE = 1080;
 const BUFF_WID_MOD = 1;
 const BUFF_HEI_MOD = 1;
@@ -240,13 +240,13 @@ let sketch = function(p5) {
     scope.l = featureLuminance;
     
     $fx.features({
-      "Variation": featureVariation,
+      //~ "Variation": featureVariation,
       "Luminance": featureLuminance,
       "Background Hue": featureHue,
       "Background Saturation": featureSaturation,
-      "Third function": functionMap["draw"][p["drawFunction"]].name,
-      "Second function": functionMap["drawInner"][p["drawInnerFunction"]].name,
-      "First function": functionMap["drawSpiral"][p["drawSpiral"]].name,
+      //~ "Third function": p["drawFunction"],
+      //~ "Second function": p["drawInnerFunction"],
+      //~ "First function": p["drawSpiral"],
     });
     
     functionMap["setup"][p["setupFunction"]]();
