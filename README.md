@@ -65,6 +65,11 @@ _removed, see note_
 * [Variation 10](https://www.fxhash.xyz/generative/25935)  
 * [Variation 11](https://www.fxhash.xyz/generative/26105)  
 * [Variation 12](https://www.fxhash.xyz/generative/26432)  
+* [Variation 13](https://www.fxhash.xyz/generative/26497)  
+* [Variation 14](https://www.fxhash.xyz/generative/26599)  
+* [Variation 15](https://www.fxhash.xyz/generative/26708)  
+* [Variation 16](https://www.fxhash.xyz/generative/26877)  
+* [Variation 17](https://www.fxhash.xyz/generative/27799)  
 
 **NOTE:** variation 9 has been flagged as undesirable content by the moderation 
 team. Reason: Variation too low. The 
