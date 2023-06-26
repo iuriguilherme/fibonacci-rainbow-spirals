@@ -24,12 +24,15 @@
 html {
   margin: 0 auto;
   padding: 0 auto;
+  background: white;
+  height: 100%;
 }
 body {
   /* leave it to hide the scrollbars */
   overflow: hidden;
-  margin: 0 auto;
-  padding: 0 auto;
+  height: 100%;	
+  margin: 0;
+  padding: 10px;
   display: grid;
   place-items: center;
 }
